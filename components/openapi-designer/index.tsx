@@ -46,36 +46,34 @@ function OpenAPIDesignerContent() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-full py-6">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Code className="h-5 w-5" />
-            <span className="font-semibold">OpenAPI Designer</span>
-            <span className="text-xs text-muted-foreground ml-2">
-              {spec.info?.title} v{spec.info?.version}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={scrollToTop}>
-              <ArrowUp className="h-4 w-4 mr-1" />
-              Top
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleSave}>
-              <Save className="h-4 w-4 mr-1" />
-              Save
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleUndo}>
-              <Undo2 className="h-4 w-4 mr-1" />
-              Undo
-            </Button>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Code className="h-5 w-5" />
+          <span className="font-semibold text-lg">OpenAPI Designer</span>
+          <span className="text-sm text-muted-foreground ml-2">
+            {spec.info?.title} v{spec.info?.version}
+          </span>
         </div>
-      </header>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={scrollToTop}>
+            <ArrowUp className="h-4 w-4 mr-1" />
+            Top
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleSave}>
+            <Save className="h-4 w-4 mr-1" />
+            Save
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleUndo}>
+            <Undo2 className="h-4 w-4 mr-1" />
+            Undo
+          </Button>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 container py-6">
+      <div className="flex-1">
         <Tabs defaultValue="paths" className="w-full">
           <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-flex">
             <TabsTrigger value="import" className="gap-2">
@@ -146,7 +144,7 @@ function OpenAPIDesignerContent() {
             </TabsContent>
           </div>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 }
