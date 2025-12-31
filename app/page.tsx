@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, BarChart3, LineChart, Shield, Zap, LayoutDashboard } from "lucide-react"
+import { ArrowRight, FileJson, Server, Code2, Layers, Download, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Header } from "@/components/layout/header"
@@ -15,16 +15,16 @@ export default function LandingPage() {
                 <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
                     <div className="container mx-auto flex max-w-[64rem] flex-col items-center gap-4 text-center">
                         <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-                            Build your next idea even faster.
+                            OpenAPI & MCP Server Designer
                         </h1>
                         <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-                            Beautifully designed components built with Radix UI and Tailwind CSS.
-                            Accessible. Customizable. Open Source.
+                            Visual editor for creating and editing OpenAPI 3.x specifications and MCP server configurations.
+                            Design your APIs with an intuitive interface.
                         </p>
                         <div className="space-x-4">
-                            <Link href="/dashboard">
+                            <Link href="/openapi-designer">
                                 <Button size="lg" className="h-11 px-8">
-                                    Get Started
+                                    Open Designer
                                     <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
                             </Link>
@@ -42,73 +42,73 @@ export default function LandingPage() {
                             Features
                         </h2>
                         <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-                            This template comes with everything you need to start your next project.
+                            Everything you need to design professional API specifications.
                         </p>
                     </div>
                     <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
                         <Card>
                             <CardHeader>
-                                <BarChart3 className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Analytics</CardTitle>
+                                <FileJson className="h-10 w-10 mb-2 text-primary" />
+                                <CardTitle>OpenAPI 3.x Support</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    Built-in analytics dashboard to track your key metrics and performance.
+                                    Full support for OpenAPI 3.0 and 3.1 specifications with visual editing for all components.
                                 </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader>
-                                <Zap className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Fast Performance</CardTitle>
+                                <Server className="h-10 w-10 mb-2 text-primary" />
+                                <CardTitle>MCP Server Config</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    Optimized for speed with Next.js 14 and server components.
+                                    Design and configure Model Context Protocol servers with an intuitive interface.
                                 </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader>
-                                <Shield className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Secure Authentication</CardTitle>
+                                <Eye className="h-10 w-10 mb-2 text-primary" />
+                                <CardTitle>Visual Editor</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    Authentication ready to go with Better Auth and secure sessions.
+                                    No more hand-editing YAML files. Design your APIs visually with instant validation.
                                 </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader>
-                                <LineChart className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Trading Ready</CardTitle>
+                                <Layers className="h-10 w-10 mb-2 text-primary" />
+                                <CardTitle>Schema Management</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    Pre-built components for financial and trading applications.
+                                    Define reusable schemas, manage references, and keep your API definitions DRY.
                                 </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader>
-                                <LayoutDashboard className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Dashboard</CardTitle>
+                                <Code2 className="h-10 w-10 mb-2 text-primary" />
+                                <CardTitle>Import & Export</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    A fully functional dashboard implementation to jumpstart your app.
+                                    Import existing specs in JSON or YAML. Export your work in multiple formats.
                                 </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader>
-                                <Zap className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Modern Stack</CardTitle>
+                                <Download className="h-10 w-10 mb-2 text-primary" />
+                                <CardTitle>Local Storage</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    Built with the latest tech: Next.js, Tailwind, Shadcn UI, and Stripe.
+                                    Your work is auto-saved locally. Undo changes and never lose your progress.
                                 </p>
                             </CardContent>
                         </Card>
@@ -117,14 +117,14 @@ export default function LandingPage() {
                 <section id="cta" className="border-t">
                     <div className="container mx-auto flex flex-col items-center gap-4 py-24 text-center md:py-32">
                         <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-                            Ready to get started?
+                            Ready to design your API?
                         </h2>
                         <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-                            Start building your next project today with our free template.
+                            Start building your OpenAPI specification today with our visual designer.
                         </p>
-                        <Link href="/dashboard">
+                        <Link href="/openapi-designer">
                             <Button size="lg" className="h-11 px-8">
-                                Go to Dashboard
+                                Open Designer
                             </Button>
                         </Link>
                     </div>
