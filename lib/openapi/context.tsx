@@ -814,28 +814,9 @@ const OpenAPIContext = createContext<OpenAPIContextType | null>(null);
 // Provider component
 export function OpenAPIProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
-    spec: createEmptySpec(),
+    spec: preProcessDefinition(clone(petstoreSpec)),
     snapshot: null,
   });
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          dispatch({ type: 'SET_SPEC', payload: parsed });
-        } catch {
-          // If parse fails, load demo
-          dispatch({ type: 'LOAD_DEMO' });
-        }
-      } else {
-        // No stored data, load demo
-        dispatch({ type: 'LOAD_DEMO' });
-      }
-    }
-  }, []);
 
   // Save to localStorage
   const save = useCallback(() => {
