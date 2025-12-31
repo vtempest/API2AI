@@ -40,6 +40,11 @@ import {
 
 hljs.registerLanguage('bash', bash);
 
+export const metadata = {
+  title: 'API2AI',
+  description: 'API2AI - The OpenAPI Designer',
+};
+
 const features = [
   { icon: Rocket, title: "mcp-use Framework", desc: "Highly useful, convenient, popular, production-ready" },
   { icon: Search, title: "Built-in Inspector", desc: "Test at /inspector" },
@@ -135,7 +140,7 @@ export default function API2AICompact() {
             {/* CTA */}
             <div className="flex flex-wrap items-center gap-3">
               <a
-                href="/openapi-designer"
+                href="/dashboard"
                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-medium text-sm hover:opacity-90 transition-opacity"
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -266,7 +271,7 @@ export default function API2AICompact() {
 
           <div className="flex justify-center gap-4">
             <a
-              href="/openapi-designer"
+              href="/dashboard"
               className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white font-medium hover:opacity-90 transition-opacity"
             >
               <Wand2 className="w-5 h-5" />
