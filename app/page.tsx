@@ -40,11 +40,6 @@ import {
 
 hljs.registerLanguage('bash', bash);
 
-export const metadata = {
-  title: 'API2AI',
-  description: 'API2AI - The OpenAPI Designer',
-};
-
 const features = [
   { icon: Rocket, title: "mcp-use Framework", desc: "Highly useful, convenient, popular, production-ready" },
   { icon: Search, title: "Built-in Inspector", desc: "Test at /inspector" },
