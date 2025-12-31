@@ -197,41 +197,6 @@ export function ExportTab() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Export Statistics</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-4">
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold">{Object.keys(spec.paths || {}).length}</div>
-              <div className="text-sm text-muted-foreground">Paths</div>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold">
-                {Object.values(spec.paths || {}).reduce((acc, path) => {
-                  const methods = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace'];
-                  return acc + methods.filter((m) => (path as Record<string, unknown>)[m]).length;
-                }, 0)}
-              </div>
-              <div className="text-sm text-muted-foreground">Operations</div>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold">
-                {Object.keys(spec.components?.schemas || {}).length}
-              </div>
-              <div className="text-sm text-muted-foreground">Schemas</div>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold">
-                {Math.round(jsonOutput.length / 1024 * 10) / 10}
-              </div>
-              <div className="text-sm text-muted-foreground">KB (JSON)</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
           <div className="flex items-center gap-2">
             <Server className="h-5 w-5" />
             <div>
@@ -310,6 +275,42 @@ export function ExportTab() {
           </Button>
         </CardContent>
       </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Export Statistics</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">{Object.keys(spec.paths || {}).length}</div>
+              <div className="text-sm text-muted-foreground">Paths</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">
+                {Object.values(spec.paths || {}).reduce((acc, path) => {
+                  const methods = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace'];
+                  return acc + methods.filter((m) => (path as Record<string, unknown>)[m]).length;
+                }, 0)}
+              </div>
+              <div className="text-sm text-muted-foreground">Operations</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">
+                {Object.keys(spec.components?.schemas || {}).length}
+              </div>
+              <div className="text-sm text-muted-foreground">Schemas</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">
+                {Math.round(jsonOutput.length / 1024 * 10) / 10}
+              </div>
+              <div className="text-sm text-muted-foreground">KB (JSON)</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+
     </div>
   );
 }
