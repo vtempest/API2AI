@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useOpenAPI, parseSpec, isValidOpenAPI3, isSwagger2, convertSwagger2ToOpenAPI3 } from '@/lib/openapi';
-import { Upload, FileJson, Trash2, Play } from 'lucide-react';
+import { Upload, FileJson, Trash2, Play, ShoppingCart, Cloud, Users } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { demoSpecs, DemoSpecKey } from '@/lib/openapi/demo-specs';
 
 export function ImportTab() {
   const { spec, dispatch, save } = useOpenAPI();
@@ -44,10 +45,21 @@ export function ImportTab() {
     }
   };
 
-  const loadDemo = () => {
+  const loadDemo = (demoKey: DemoSpecKey) => {
     save();
-    dispatch({ type: 'LOAD_DEMO' });
-    toast.success('Demo petstore loaded');
+    const demo = demoSpecs[demoKey];
+    dispatch({ type: 'SET_SPEC', payload: demo.spec });
+    toast.success(`${demo.name} loaded successfully`);
+  };
+
+  const getDemoIcon = (demoKey: DemoSpecKey) => {
+    const icons = {
+      petstore: Play,
+      ecommerce: ShoppingCart,
+      weather: Cloud,
+      userManagement: Users,
+    };
+    return icons[demoKey];
   };
 
   const removeAllPaths = () => {
@@ -129,13 +141,37 @@ paths: {}`}
         <div className="space-y-4">
           <Card>
             <CardHeader>
+              <CardTitle>Demo Examples</CardTitle>
+              <CardDescription>
+                Load pre-built API specifications to get started quickly
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {Object.entries(demoSpecs).map(([key, demo]) => {
+                const Icon = getDemoIcon(key as DemoSpecKey);
+                return (
+                  <Button
+                    key={key}
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => loadDemo(key as DemoSpecKey)}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{demo.name}</span>
+                      <span className="text-xs text-muted-foreground">{demo.description}</span>
+                    </div>
+                  </Button>
+                );
+              })}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start" onClick={loadDemo}>
-                <Play className="h-4 w-4 mr-2" />
-                Load Demo (Petstore)
-              </Button>
               <Button
                 variant="outline"
                 className="w-full justify-start text-destructive hover:text-destructive"
