@@ -135,7 +135,7 @@ export default function API2AICompact() {
             {/* CTA */}
             <div className="flex flex-wrap items-center gap-3">
               <a
-                href="/dashboard"
+                href="/openapi-designer"
                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-medium text-sm hover:opacity-90 transition-opacity"
               >
                 <LayoutDashboard className="w-4 h-4" />
