@@ -105,6 +105,87 @@ export function ExportTab() {
 
   return (
     <div className="space-y-6">
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Server className="h-5 w-5" />
+            <div>
+              <CardTitle>Generate MCP Server</CardTitle>
+              <CardDescription>
+                Create a complete MCP server from your OpenAPI definition
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">{toolCount}</div>
+              <div className="text-sm text-muted-foreground">MCP Tools</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">8</div>
+              <div className="text-sm text-muted-foreground">Files Generated</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold flex items-center justify-center gap-1">
+                <Package className="h-5 w-5" />
+              </div>
+              <div className="text-sm text-muted-foreground">Ready to Deploy</div>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="server-name">Server Name</Label>
+              <Input
+                id="server-name"
+                value={serverName}
+                onChange={(e) => setServerName(e.target.value.replace(/[^a-zA-Z0-9-_]/g, '-'))}
+                placeholder="my-mcp-server"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="server-port">Port</Label>
+              <Input
+                id="server-port"
+                type="number"
+                value={serverPort}
+                onChange={(e) => setServerPort(e.target.value)}
+                placeholder="3000"
+              />
+            </div>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-2">
+            <p className="font-medium">Generated server includes:</p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+              <li>MCP server with all API operations as tools</li>
+              <li>Built-in Inspector UI at <code>/inspector</code></li>
+              <li>HTTP client for API requests</li>
+              <li>Environment configuration</li>
+              <li>README with setup instructions</li>
+            </ul>
+          </div>
+
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={handleGenerateMcpServer}
+            disabled={isGenerating || toolCount === 0}
+          >
+            {isGenerating ? (
+              <>Generating...</>
+            ) : (
+              <>
+                <Download className="h-4 w-4 mr-2" />
+                Generate MCP Server
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Export Definition</h2>
@@ -195,86 +276,6 @@ export function ExportTab() {
         </TabsContent>
       </Tabs>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Server className="h-5 w-5" />
-            <div>
-              <CardTitle>Generate MCP Server</CardTitle>
-              <CardDescription>
-                Create a complete MCP server from your OpenAPI definition
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold">{toolCount}</div>
-              <div className="text-sm text-muted-foreground">MCP Tools</div>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold">8</div>
-              <div className="text-sm text-muted-foreground">Files Generated</div>
-            </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <div className="text-2xl font-bold flex items-center justify-center gap-1">
-                <Package className="h-5 w-5" />
-              </div>
-              <div className="text-sm text-muted-foreground">Ready to Deploy</div>
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="server-name">Server Name</Label>
-              <Input
-                id="server-name"
-                value={serverName}
-                onChange={(e) => setServerName(e.target.value.replace(/[^a-zA-Z0-9-_]/g, '-'))}
-                placeholder="my-mcp-server"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="server-port">Port</Label>
-              <Input
-                id="server-port"
-                type="number"
-                value={serverPort}
-                onChange={(e) => setServerPort(e.target.value)}
-                placeholder="3000"
-              />
-            </div>
-          </div>
-
-          <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-2">
-            <p className="font-medium">Generated server includes:</p>
-            <ul className="list-disc list-inside text-muted-foreground space-y-1">
-              <li>MCP server with all API operations as tools</li>
-              <li>Built-in Inspector UI at <code>/inspector</code></li>
-              <li>HTTP client for API requests</li>
-              <li>Environment configuration</li>
-              <li>README with setup instructions</li>
-            </ul>
-          </div>
-
-          <Button
-            size="lg"
-            className="w-full"
-            onClick={handleGenerateMcpServer}
-            disabled={isGenerating || toolCount === 0}
-          >
-            {isGenerating ? (
-              <>Generating...</>
-            ) : (
-              <>
-                <Download className="h-4 w-4 mr-2" />
-                Generate MCP Server
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Export Statistics</CardTitle>
