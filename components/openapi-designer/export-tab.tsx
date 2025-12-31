@@ -4,10 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useOpenAPI, toJson, toYaml, downloadFile, copyToClipboard, postProcessDefinition } from '@/lib/openapi';
-import { FileJson, FileCode, Download, Copy, Check } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useOpenAPI, toJson, toYaml, downloadFile, copyToClipboard, postProcessDefinition, generateMcpServerFiles, getToolCount } from '@/lib/openapi';
+import { FileJson, FileCode, Download, Copy, Check, Server, Package } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import JSZip from 'jszip';
 
 export function ExportTab() {
   const { spec } = useOpenAPI();
@@ -15,11 +18,16 @@ export function ExportTab() {
   const [yamlOutput, setYamlOutput] = useState('');
   const [copiedJson, setCopiedJson] = useState(false);
   const [copiedYaml, setCopiedYaml] = useState(false);
+  const [serverName, setServerName] = useState('my-mcp-server');
+  const [serverPort, setServerPort] = useState('3000');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [toolCount, setToolCount] = useState(0);
 
   // Generate outputs when spec changes
   useEffect(() => {
     const processed = postProcessDefinition(spec);
     setJsonOutput(toJson(processed));
+    setToolCount(getToolCount(processed));
 
     toYaml(processed).then(setYamlOutput).catch(() => {
       setYamlOutput('Error generating YAML');
@@ -56,6 +64,43 @@ export function ExportTab() {
   const handleDownloadYaml = () => {
     downloadFile(yamlOutput, 'openapi.yaml', 'text/yaml');
     toast.success('Downloaded openapi.yaml');
+  };
+
+  const handleGenerateMcpServer = async () => {
+    setIsGenerating(true);
+    try {
+      const processed = postProcessDefinition(spec);
+      const files = generateMcpServerFiles(processed, {
+        serverName: serverName || 'my-mcp-server',
+        port: parseInt(serverPort) || 3000,
+        baseUrl: spec.servers?.[0]?.url,
+      });
+
+      // Create zip file using JSZip
+      const zip = new JSZip();
+      const folderName = serverName || 'my-mcp-server';
+
+      for (const file of files) {
+        zip.file(`${folderName}/${file.path}`, file.content);
+      }
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${folderName}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(`Generated ${folderName}.zip with ${files.length} files`);
+    } catch (error) {
+      console.error('Error generating MCP server:', error);
+      toast.error('Failed to generate MCP server');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -182,6 +227,87 @@ export function ExportTab() {
               <div className="text-sm text-muted-foreground">KB (JSON)</div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Server className="h-5 w-5" />
+            <div>
+              <CardTitle>Generate MCP Server</CardTitle>
+              <CardDescription>
+                Create a complete MCP server from your OpenAPI definition
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">{toolCount}</div>
+              <div className="text-sm text-muted-foreground">MCP Tools</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold">8</div>
+              <div className="text-sm text-muted-foreground">Files Generated</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold flex items-center justify-center gap-1">
+                <Package className="h-5 w-5" />
+              </div>
+              <div className="text-sm text-muted-foreground">Ready to Deploy</div>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="server-name">Server Name</Label>
+              <Input
+                id="server-name"
+                value={serverName}
+                onChange={(e) => setServerName(e.target.value.replace(/[^a-zA-Z0-9-_]/g, '-'))}
+                placeholder="my-mcp-server"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="server-port">Port</Label>
+              <Input
+                id="server-port"
+                type="number"
+                value={serverPort}
+                onChange={(e) => setServerPort(e.target.value)}
+                placeholder="3000"
+              />
+            </div>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-2">
+            <p className="font-medium">Generated server includes:</p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+              <li>MCP server with all API operations as tools</li>
+              <li>Built-in Inspector UI at <code>/inspector</code></li>
+              <li>HTTP client for API requests</li>
+              <li>Environment configuration</li>
+              <li>README with setup instructions</li>
+            </ul>
+          </div>
+
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={handleGenerateMcpServer}
+            disabled={isGenerating || toolCount === 0}
+          >
+            {isGenerating ? (
+              <>Generating...</>
+            ) : (
+              <>
+                <Download className="h-4 w-4 mr-2" />
+                Generate MCP Server
+              </>
+            )}
+          </Button>
         </CardContent>
       </Card>
     </div>
