@@ -15,6 +15,11 @@ import {
   Github,
   FileJson,
   PlayCircle,
+  LayoutDashboard,
+  Wand2,
+  Code2,
+  Zap,
+  FileCode,
 } from "lucide-react";
 
 import hljs from 'highlight.js/lib/core';
@@ -128,14 +133,21 @@ export default function API2AICompact() {
             </div>
 
             {/* CTA */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="/dashboard"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-medium text-sm hover:opacity-90 transition-opacity"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Go to Dashboard
+                <ArrowRight className="w-4 h-4" />
+              </a>
               <a
                 href="https://github.com/vtempest/GRAB-URL/tree/master/api2ai/example-petstore"
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-medium text-sm hover:opacity-90 transition-opacity"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition-colors"
               >
                 <Github className="w-4 h-4" />
                 View Example
-                <ArrowRight className="w-4 h-4" />
               </a>
               <a
                 href="https://npmjs.org/package/api2ai"
@@ -197,6 +209,76 @@ export default function API2AICompact() {
                 </VideoModalVideo>
               </VideoModalContent>
             </VideoModal>
+          </div>
+        </div>
+
+        {/* OpenAPI Designer Section */}
+        <div className="mt-20 pt-20 border-t border-gray-200 dark:border-gray-800">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500">
+                <Wand2 className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold">
+                OpenAPI <span className="text-violet-500">Designer</span>
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Visual OpenAPI Specification Builder
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Design, build, and validate OpenAPI 3.x specifications with our intuitive visual editor.
+              Perfect for creating API documentation and generating MCP servers.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-600 transition-colors bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+              <div className="p-3 rounded-lg bg-violet-100 dark:bg-violet-900/30 w-fit mb-4">
+                <Code2 className="w-6 h-6 text-violet-500" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Visual Editor</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Build OpenAPI specs visually with a user-friendly interface. No need to write YAML or JSON by hand.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-600 transition-colors bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+              <div className="p-3 rounded-lg bg-purple-100 dark:bg-purple-900/30 w-fit mb-4">
+                <Zap className="w-6 h-6 text-purple-500" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Real-time Validation</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Validate your API specifications in real-time as you build. Catch errors before deployment.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-600 transition-colors bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+              <div className="p-3 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 w-fit mb-4">
+                <FileCode className="w-6 h-6 text-cyan-500" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Export & Generate</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Export to YAML/JSON and generate MCP servers instantly with the API2AI CLI tool.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <a
+              href="/openapi-designer"
+              className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white font-medium hover:opacity-90 transition-opacity"
+            >
+              <Wand2 className="w-5 h-5" />
+              Launch Designer
+              <ArrowRight className="w-5 h-5" />
+            </a>
+            <a
+              href="/docs"
+              className="flex items-center gap-2 px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+            >
+              View Documentation
+            </a>
           </div>
         </div>
       </div>
