@@ -6,25 +6,18 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import {
-  LayoutDashboard,
-  Zap,
-  Target,
-  Copy,
-  Shield,
   Settings,
   HelpCircle,
   ChevronUp,
   User2,
   LogOut,
   LogIn,
-  Sparkles,
   CreditCard,
   Search,
-  Bell,
-  BarChart3,
   Palette,
   Moon,
-  Sun
+  Sun,
+  ExternalLink
 } from 'lucide-react'
 import { useSession, signOut } from "@/lib/auth-client"
 import { useTheme } from "next-themes"
@@ -182,23 +175,6 @@ function SidebarSearch() {
   )
 }
 
-// Navigation Configuration
-const navigationGroups = [
-  {
-    title: "Market",
-    items: [
-      { name: "Analyze Strategy", tab: "strategies", icon: Zap },
-      { name: "Market Scanner", tab: "scanner", icon: BarChart3 },
-    ],
-  },
-  {
-    title: "Risk & Portfolio",
-    items: [
-      { name: "Overview", tab: "overview", icon: LayoutDashboard },
-      { name: "Risk Management", tab: "risk", icon: Shield },
-    ],
-  },
-]
 
 function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
@@ -299,30 +275,6 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        {navigationGroups.map((group) => (
-          <SidebarGroup key={group.title}>
-            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.tab)}
-                      tooltip={item.name}
-                    >
-                      <Link href={`/dashboard?tab=${item.tab}`}>
-                        <item.icon />
-                        <span className="group-data-[collapsible=icon]:hidden">{item.name}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
-
         <SidebarGroup>
           <SidebarGroupLabel>Settings</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -346,6 +298,17 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Link href="/docs">
                     <HelpCircle />
                     <span className="group-data-[collapsible=icon]:hidden">Documentation</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="API Preview (Scalar)"
+                >
+                  <Link href="/scalar" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink />
+                    <span className="group-data-[collapsible=icon]:hidden">API Preview</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
