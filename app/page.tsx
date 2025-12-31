@@ -1,136 +1,205 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { ArrowRight, FileJson, Server, Code2, Layers, Download, Eye } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import React, { useState } from "react";
+import {
+  Rocket,
+  Search,
+  Radio,
+  Lock,
+  Sparkles,
+  Layers,
+  ArrowRight,
+  Check,
+  Copy,
+  Bot,
+  Github,
+  FileJson,
+  PlayCircle,
+} from "lucide-react";
 
-export default function LandingPage() {
-    return (
-        <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">
-                <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-                    <div className="container mx-auto flex max-w-[64rem] flex-col items-center gap-4 text-center">
-                        <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-                            OpenAPI & MCP Server Designer
-                        </h1>
-                        <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-                            Visual editor for creating and editing OpenAPI 3.x specifications and MCP server configurations.
-                            Design your APIs with an intuitive interface.
-                        </p>
-                        <div className="space-x-4">
-                            <Link href="/openapi-designer">
-                                <Button size="lg" className="h-11 px-8">
-                                    Open Designer
-                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            </Link>
-                            <Link href="/docs">
-                                <Button variant="outline" size="lg" className="h-11 px-8">
-                                    Documentation
-                                </Button>
-                            </Link>
-                        </div>
+import hljs from 'highlight.js/lib/core';
+import bash from 'highlight.js/lib/languages/bash';
+import 'highlight.js/styles/github-dark.css';
+
+import {
+  VideoModal,
+  VideoModalContent,
+  VideoModalDescription,
+  VideoModalTitle,
+  VideoModalTrigger,
+  VideoModalVideo,
+  VideoPlayButton,
+  VideoPlayer,
+  VideoPreview,
+} from "@/components/ui/video-modal";
+
+hljs.registerLanguage('bash', bash);
+
+const features = [
+  { icon: Rocket, title: "mcp-use Framework", desc: "Highly useful, convenient, popular, production-ready" },
+  { icon: Search, title: "Built-in Inspector", desc: "Test at /inspector" },
+  { icon: Radio, title: "Multiple Transports", desc: "HTTP, SSE support" },
+  { icon: Lock, title: "Auth Support", desc: "Tokens & API keys" },
+  { icon: Sparkles, title: "Zod Schemas", desc: "Type-safe validation" },
+  { icon: Layers, title: "Production Ready", desc: "Docker & K8s ready" },
+];
+
+const quickStartCode = `# Generate from OpenAPI spec
+npx api2ai \\
+  https://petstore3.swagger.io/api/v3/openapi.json \\
+  ./petstore-mcp --name petstore-api
+
+cd petstore-mcp && npm install && npm start`;
+
+function CodeBlock({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const codeRef = React.useRef<HTMLElement>(null);
+
+  React.useEffect(() => {
+    if (codeRef.current) {
+      hljs.highlightElement(codeRef.current);
+    }
+  }, [code]);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <span className="text-xs text-gray-500 font-mono">bash</span>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+        >
+          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+      <pre className="p-4 overflow-x-auto text-sm bg-gray-900">
+        <code ref={codeRef} className="text-gray-100 font-mono leading-relaxed whitespace-pre language-bash">{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+export default function API2AICompact() {
+  return (
+    <section className="py-16 px-6" id="api2ai">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div>
+            {/* Header */}
+            <div className="mb-6">
+              <div className="inline-flex items-center gap-2 mb-4">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500">
+                  <Bot className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-2xl font-bold">
+                  API<span className="text-violet-500">2</span>AI
+                </span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold mb-3">
+                OpenAPI → MCP Server Generator
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Generate production-ready MCP servers with built-in inspector, multiple transports, and ChatGPT Apps SDK support.
+              </p>
+            </div>
+
+            {/* Code Block */}
+            <div className="mb-8">
+              <CodeBlock code={quickStartCode} />
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+              {features.map((f, i) => (
+                <div key={i} className="p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-600 transition-colors">
+                  <f.icon className="w-4 h-4 text-violet-500 mb-1.5" />
+                  <h3 className="font-semibold text-sm">{f.title}</h3>
+                  <p className="text-xs text-gray-500">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="flex items-center gap-3">
+              <a
+                href="https://github.com/vtempest/GRAB-URL/tree/master/api2ai/example-petstore"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-medium text-sm hover:opacity-90 transition-opacity"
+              >
+                <Github className="w-4 h-4" />
+                View Example
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <a
+                href="https://npmjs.org/package/api2ai"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition-colors"
+              >
+                <FileJson className="w-4 h-4" />
+                NPM Package
+              </a>
+            </div>
+          </div>
+
+          {/* Right Image - Video Modal */}
+          <div className="flex justify-center lg:justify-end">
+            <VideoModal>
+              <VideoModalTrigger asChild>
+                <div className="relative cursor-pointer group">
+                  <h1 className="text-3xl md:text-4xl text-center font-bold mb-4 bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent animate-gradient">
+                    Play Video Intro
+                  </h1>
+                  <img
+                    src="https://i.imgur.com/TTJBLxo.png"
+                    alt="API2AI Preview"
+                    className="max-w-full h-auto rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 transition-all group-hover:shadow-3xl group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
+                      <PlayCircle className="w-6 h-6 text-violet-500" />
+                      <span className="text-sm font-medium">Watch Demo</span>
                     </div>
-                </section>
-                <section id="features" className="container mx-auto space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24">
-                    <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-                        <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-                            Features
-                        </h2>
-                        <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-                            Everything you need to design professional API specifications.
-                        </p>
-                    </div>
-                    <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
-                        <Card>
-                            <CardHeader>
-                                <FileJson className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>OpenAPI 3.x Support</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    Full support for OpenAPI 3.0 and 3.1 specifications with visual editing for all components.
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <Server className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>MCP Server Config</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    Design and configure Model Context Protocol servers with an intuitive interface.
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <Eye className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Visual Editor</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    No more hand-editing YAML files. Design your APIs visually with instant validation.
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <Layers className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Schema Management</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    Define reusable schemas, manage references, and keep your API definitions DRY.
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <Code2 className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Import & Export</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    Import existing specs in JSON or YAML. Export your work in multiple formats.
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <Download className="h-10 w-10 mb-2 text-primary" />
-                                <CardTitle>Local Storage</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    Your work is auto-saved locally. Undo changes and never lose your progress.
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </section>
-                <section id="cta" className="border-t">
-                    <div className="container mx-auto flex flex-col items-center gap-4 py-24 text-center md:py-32">
-                        <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-                            Ready to design your API?
-                        </h2>
-                        <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-                            Start building your OpenAPI specification today with our visual designer.
-                        </p>
-                        <Link href="/openapi-designer">
-                            <Button size="lg" className="h-11 px-8">
-                                Open Designer
-                            </Button>
-                        </Link>
-                    </div>
-                </section>
-            </main>
-            <Footer />
+                  </div>
+                </div>
+              </VideoModalTrigger>
+              <VideoModalContent>
+                <VideoModalDescription>
+                  See how to generate a production-ready MCP server from any OpenAPI spec
+                </VideoModalDescription>
+                <VideoModalVideo>
+                  <VideoPlayer>
+                    <VideoPreview>
+                      <img
+                        src="https://i.imgur.com/TTJBLxo.png"
+                        alt="Video preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </VideoPreview>
+                    <VideoPlayButton>
+                      <button className="absolute inset-0 m-auto flex size-32 items-center justify-center rounded-full border border-white border-white/10 bg-white/50 transition duration-300 hover:bg-white/75">
+                        <PlayCircle className="size-20 stroke-1 text-white" />
+                      </button>
+                    </VideoPlayButton>
+                    <video
+                      className="size-full"
+                      src="https://i.imgur.com/5wsY7Wm.mp4"
+                      controls
+                      autoPlay
+                      loop
+                    />
+                  </VideoPlayer>
+                </VideoModalVideo>
+              </VideoModalContent>
+            </VideoModal>
+          </div>
         </div>
-    )
+      </div>
+    </section>
+  );
 }
