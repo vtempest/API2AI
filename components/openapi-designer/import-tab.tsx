@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useOpenAPI, parseSpec, isValidOpenAPI3 } from '@/lib/openapi';
+import { useOpenAPI, parseSpec, isValidOpenAPI3, isSwagger2, convertSwagger2ToOpenAPI3 } from '@/lib/openapi';
 import { Upload, FileJson, Trash2, Play } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -23,19 +23,19 @@ export function ImportTab() {
     try {
       const parsed = await parseSpec(importText);
 
-      if (!isValidOpenAPI3(parsed)) {
-        // Check if it's Swagger 2.0
-        if ((parsed as Record<string, string>).swagger === '2.0') {
-          toast.error('Swagger 2.0 detected. Please convert to OpenAPI 3.x first.');
-        } else {
-          toast.error('Invalid OpenAPI 3.x definition');
-        }
+      if (isValidOpenAPI3(parsed)) {
+        dispatch({ type: 'SET_SPEC', payload: parsed });
+        toast.success('OpenAPI 3.x definition imported successfully');
+      } else if (isSwagger2(parsed)) {
+        // Auto-convert Swagger 2.0 to OpenAPI 3.0
+        const converted = convertSwagger2ToOpenAPI3(parsed as Record<string, unknown>);
+        dispatch({ type: 'SET_SPEC', payload: converted });
+        toast.success('Swagger 2.0 converted to OpenAPI 3.0 and imported');
+      } else {
+        toast.error('Invalid OpenAPI specification. Must be OpenAPI 3.x or Swagger 2.0.');
         setIsLoading(false);
         return;
       }
-
-      dispatch({ type: 'SET_SPEC', payload: parsed });
-      toast.success('Definition imported successfully');
     } catch (error) {
       console.error('Import error:', error);
       toast.error('Failed to parse definition. Check the format and try again.');

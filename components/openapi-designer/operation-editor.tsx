@@ -11,11 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useOpenAPI, type OperationObject, type HttpMethod, HTTP_METHODS } from '@/lib/openapi';
-import { Plus, Trash2, ChevronDown, Copy, Settings, MessageSquare, FileText, List, Shield } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, Copy, Settings, MessageSquare, FileText, List, Shield, Webhook, Link2 } from 'lucide-react';
 import { useState } from 'react';
 import { ParameterEditor } from './parameter-editor';
 import { ResponseEditor } from './response-editor';
 import { RequestBodyEditor } from './request-body-editor';
+import { CallbacksEditor } from './callbacks-editor';
+import { LinksEditor } from './links-editor';
+import { MarkdownEditor } from './markdown-preview';
 
 interface OperationEditorProps {
   path: string;
@@ -160,7 +163,7 @@ export function OperationEditor({ path, method, operation }: OperationEditorProp
         <CollapsibleContent>
           <CardContent className="space-y-4">
             <Tabs defaultValue="main" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="flex flex-wrap h-auto gap-1">
                 <TabsTrigger value="main" className="gap-1">
                   <Settings className="h-3 w-3" />
                   <span className="hidden sm:inline">Main</span>
@@ -180,6 +183,14 @@ export function OperationEditor({ path, method, operation }: OperationEditorProp
                 <TabsTrigger value="responses" className="gap-1">
                   <Shield className="h-3 w-3" />
                   <span className="hidden sm:inline">Responses</span>
+                </TabsTrigger>
+                <TabsTrigger value="callbacks" className="gap-1">
+                  <Webhook className="h-3 w-3" />
+                  <span className="hidden sm:inline">Callbacks</span>
+                </TabsTrigger>
+                <TabsTrigger value="links" className="gap-1">
+                  <Link2 className="h-3 w-3" />
+                  <span className="hidden sm:inline">Links</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -243,15 +254,13 @@ export function OperationEditor({ path, method, operation }: OperationEditorProp
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea
-                    value={operation.description || ''}
-                    onChange={(e) => updateOperation({ description: e.target.value })}
-                    placeholder="Detailed description (supports Markdown)"
-                    rows={4}
-                  />
-                </div>
+                <MarkdownEditor
+                  label="Description"
+                  value={operation.description || ''}
+                  onChange={(value) => updateOperation({ description: value })}
+                  placeholder="Detailed description (supports Markdown)"
+                  rows={4}
+                />
 
                 <div className="space-y-2">
                   <Label>Tags</Label>
@@ -370,6 +379,48 @@ export function OperationEditor({ path, method, operation }: OperationEditorProp
                       response={response}
                     />
                   ))}
+                </div>
+              </TabsContent>
+
+              {/* Callbacks Tab */}
+              <TabsContent value="callbacks" className="space-y-4 mt-4">
+                <CallbacksEditor
+                  path={path}
+                  method={method}
+                  callbacks={operation.callbacks}
+                />
+              </TabsContent>
+
+              {/* Links Tab - shows links from all responses */}
+              <TabsContent value="links" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  {Object.entries(operation.responses || {}).map(([statusCode, response]) => (
+                    <div key={statusCode} className="space-y-2">
+                      <Label className="text-sm font-medium">Response {statusCode} Links</Label>
+                      <LinksEditor
+                        path={path}
+                        method={method}
+                        statusCode={statusCode}
+                        links={response.links}
+                        onUpdate={(links) => {
+                          dispatch({
+                            type: 'UPDATE_RESPONSE',
+                            payload: {
+                              path,
+                              method,
+                              statusCode,
+                              response: { links },
+                            },
+                          });
+                        }}
+                      />
+                    </div>
+                  ))}
+                  {(!operation.responses || Object.keys(operation.responses).length === 0) && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      Add responses first to configure links between operations.
+                    </p>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
