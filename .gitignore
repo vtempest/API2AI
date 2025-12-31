@@ -42,3 +42,6 @@ Thumbs.db
 *.log
 .vercel
 .source/
+
+# Local database
+local.db
