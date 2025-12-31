@@ -16,6 +16,7 @@ import {
   ChevronUp,
   User2,
   LogOut,
+  LogIn,
   Sparkles,
   CreditCard,
   Search,
@@ -465,13 +466,22 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </DropdownMenuPortal>
                 </DropdownMenuSub>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={async () => {
-                  await signOut()
-                  router.push("/")
-                }}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
-                </DropdownMenuItem>
+                {session?.user ? (
+                  <DropdownMenuItem onClick={async () => {
+                    await signOut()
+                    router.push("/")
+                  }}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link href="/login">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sign in
+                    </Link>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

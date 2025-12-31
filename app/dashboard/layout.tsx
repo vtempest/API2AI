@@ -1,7 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
@@ -14,23 +12,6 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const { data: session, isPending } = useSession()
-  const router = useRouter()
-  const [isDevMode, setIsDevMode] = useState(false)
-
-  useEffect(() => {
-    // Check if we're in dev mode (localhost)
-    if (typeof window !== "undefined") {
-      const hostname = window.location.hostname
-      setIsDevMode(hostname === "localhost" || hostname === "127.0.0.1")
-    }
-  }, [])
-
-  useEffect(() => {
-    // Only redirect if not loading, not in dev mode, and no session
-    if (!isPending && !session?.user && !isDevMode) {
-      router.push("/login")
-    }
-  }, [session, isPending, router, isDevMode])
 
   // Show loading state while checking auth
   if (isPending) {
@@ -44,10 +25,8 @@ export default function DashboardLayout({
     )
   }
 
-  // If not authenticated and not in dev mode, show nothing (redirecting)
-  if (!session?.user && !isDevMode) {
-    return null
-  }
+  // Allow guest access - no redirect to login
+  const isGuest = !session?.user
 
   return (
     <SidebarProvider>
@@ -57,9 +36,9 @@ export default function DashboardLayout({
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <span className="text-sm text-muted-foreground">
-            {isDevMode && !session?.user && (
+            {isGuest && (
               <span className="text-amber-600 dark:text-amber-400 font-medium">
-                Dev Mode
+                Guest Mode
               </span>
             )}
           </span>
