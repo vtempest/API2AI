@@ -1,10 +1,10 @@
 import { OpenAPIDesigner } from '@/components/openapi-designer';
 
 export const metadata = {
-  title: 'OpenAPI Designer',
-  description: 'Visual editor for creating and editing OpenAPI 3.x specifications',
+  title: 'MCP Tool Designer',
+  description: 'Visual designer for creating MCP tools from OpenAPI 3.x specifications',
 };
 
-export default function OpenAPIDesignerPage() {
+export default function McpToolDesignerPage() {
   return <OpenAPIDesigner />;
 }

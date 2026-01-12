@@ -20,6 +20,7 @@ import {
   Code2,
   Zap,
   FileCode,
+  Shield,
 } from "lucide-react";
 
 import hljs from 'highlight.js/lib/core';
@@ -45,6 +46,7 @@ const features = [
   { icon: Search, title: "Built-in Inspector", desc: "Test at /inspector" },
   { icon: Radio, title: "Multiple Transports", desc: "HTTP, SSE support" },
   { icon: Lock, title: "Auth Support", desc: "Tokens & API keys" },
+  { icon: Shield, title: "OAuth/MCP Provider", desc: "Act as OAuth provider for MCP clients" },
   { icon: Sparkles, title: "Zod Schemas", desc: "Type-safe validation" },
   { icon: Layers, title: "Production Ready", desc: "Docker & K8s ready" },
 ];
@@ -112,7 +114,7 @@ export default function API2AICompact() {
                 OpenAPI → MCP Server Generator
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Generate production-ready MCP servers with built-in inspector, multiple transports, and ChatGPT Apps SDK support.
+                Generate production-ready MCP servers with built-in inspector, multiple transports, OAuth/MCP provider support, and ChatGPT Apps SDK compatibility.
               </p>
             </div>
 

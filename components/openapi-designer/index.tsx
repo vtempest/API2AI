@@ -15,7 +15,7 @@ import {
   FileJson,
   FileCode,
   Upload,
-  Settings,
+  Wrench,
 } from 'lucide-react';
 import { OpenAPIProvider, useOpenAPI } from '@/lib/openapi';
 import { InfoTab } from './info-tab';
@@ -51,7 +51,7 @@ function OpenAPIDesignerContent() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Code className="h-5 w-5" />
-          <span className="font-semibold text-lg">OpenAPI Designer</span>
+          <span className="font-semibold text-lg">MCP Tool Designer</span>
           <span className="text-sm text-muted-foreground ml-2">
             {spec.info?.title} v{spec.info?.version}
           </span>
@@ -97,8 +97,8 @@ function OpenAPIDesignerContent() {
               <span className="hidden sm:inline">Tags</span>
             </TabsTrigger>
             <TabsTrigger value="paths" className="gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Paths</span>
+              <Wrench className="h-4 w-4" />
+              <span className="hidden sm:inline">Tools</span>
             </TabsTrigger>
             <TabsTrigger value="schemas" className="gap-2">
               <Code className="h-4 w-4" />
