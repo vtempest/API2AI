@@ -10,6 +10,7 @@ export interface McpServerOptions {
   serverName?: string;
   port?: number;
   baseUrl?: string;
+  enableOAuth?: boolean;
 }
 
 export interface GeneratedFile {
@@ -214,28 +215,35 @@ export function extractTools(spec: OpenAPISpec, options: { baseUrl?: string } = 
   return tools;
 }
 
-function generatePackageJson(serverName: string, tools: Tool[], port: number): string {
+function generatePackageJson(serverName: string, tools: Tool[], port: number, enableOAuth = false): string {
+  const deps: Record<string, string> = {
+    'mcp-use': '^1.11.2',
+    'zod': '^3.23.0',
+    'dotenv': '^16.4.0',
+  };
+
+  // Add OAuth dependencies if enabled
+  if (enableOAuth) {
+    deps['better-auth'] = '^1.0.0';
+  }
+
   return JSON.stringify({
     name: serverName,
     version: '1.0.0',
-    description: `MCP server generated from OpenAPI spec (${tools.length} tools)`,
+    description: `MCP server generated from OpenAPI spec (${tools.length} tools)${enableOAuth ? ' with OAuth support' : ''}`,
     type: 'module',
     main: 'src/index.js',
     scripts: {
       start: 'node src/index.js',
       dev: 'node --watch src/index.js',
     },
-    dependencies: {
-      'mcp-use': '^1.11.2',
-      'zod': '^3.23.0',
-      'dotenv': '^16.4.0',
-    },
+    dependencies: deps,
     engines: { node: '>=18.0.0' },
   }, null, 2);
 }
 
-function generateEnvFile(baseUrl: string | undefined, port: number): string {
-  return `# Server Configuration
+function generateEnvFile(baseUrl: string | undefined, port: number, enableOAuth = false): string {
+  let envContent = `# Server Configuration
 PORT=${port}
 NODE_ENV=development
 
@@ -252,10 +260,23 @@ API_BASE_URL=${baseUrl || 'https://api.example.com'}
 # Allowed Origins (comma-separated, for production)
 # ALLOWED_ORIGINS=https://app1.com,https://app2.com
 `;
+
+  if (enableOAuth) {
+    envContent += `
+# OAuth/MCP Provider Configuration
+# ENABLE_OAUTH=true
+# OAUTH_LOGIN_PAGE=/sign-in
+# DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+# BETTER_AUTH_SECRET=your-secret-key-here
+# BETTER_AUTH_URL=http://localhost:${port}
+`;
+  }
+
+  return envContent;
 }
 
-function generateEnvExampleFile(baseUrl: string | undefined, port: number): string {
-  return `# Server Configuration
+function generateEnvExampleFile(baseUrl: string | undefined, port: number, enableOAuth = false): string {
+  let envContent = `# Server Configuration
 PORT=${port}
 NODE_ENV=development
 
@@ -270,6 +291,19 @@ API_KEY=your-api-key-here
 # MCP_URL=https://your-mcp-server.com
 # ALLOWED_ORIGINS=https://allowed-origin.com
 `;
+
+  if (enableOAuth) {
+    envContent += `
+# OAuth/MCP Provider Configuration
+ENABLE_OAUTH=false
+OAUTH_LOGIN_PAGE=/sign-in
+DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+BETTER_AUTH_SECRET=generate-a-secure-random-secret
+BETTER_AUTH_URL=http://localhost:${port}
+`;
+  }
+
+  return envContent;
 }
 
 function generateHttpClient(): string {
@@ -417,6 +451,85 @@ export const toolConfigMap = new Map(toolConfigs.map(t => [t.name, t]));
 `;
 }
 
+function generateAuthConfig(): string {
+  return `// Better Auth configuration for OAuth/MCP Provider
+// This file sets up the authentication system with MCP plugin
+
+import { betterAuth } from "better-auth";
+import { mcp } from "better-auth/plugins";
+
+export const auth = betterAuth({
+  database: {
+    // Configure your database connection
+    // See: https://www.better-auth.com/docs/concepts/database
+    connectionString: process.env.DATABASE_URL,
+    type: "postgres", // or "mysql", "sqlite"
+  },
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
+  plugins: [
+    mcp({
+      loginPage: process.env.OAUTH_LOGIN_PAGE || "/sign-in",
+    }),
+  ],
+});
+`;
+}
+
+function generateOAuthRoutes(): string {
+  return `// OAuth discovery and protected resource metadata routes
+// These routes expose OAuth metadata for MCP clients
+
+import { oAuthDiscoveryMetadata, oAuthProtectedResourceMetadata } from "better-auth/plugins";
+import { auth } from "./auth-config.js";
+
+/**
+ * OAuth Authorization Server Metadata
+ * Handles: /.well-known/oauth-authorization-server
+ */
+export async function handleOAuthDiscovery(req, res) {
+  const metadata = oAuthDiscoveryMetadata(auth);
+  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 200;
+  res.end(JSON.stringify(metadata));
+}
+
+/**
+ * OAuth Protected Resource Metadata
+ * Handles: /.well-known/oauth-protected-resource
+ */
+export async function handleProtectedResource(req, res) {
+  const metadata = oAuthProtectedResourceMetadata(auth);
+  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 200;
+  res.end(JSON.stringify(metadata));
+}
+
+/**
+ * MCP Session Handler Wrapper
+ * Use this to protect your MCP endpoints with OAuth
+ */
+export async function withMcpAuth(handler) {
+  return async (req, res) => {
+    const session = await auth.api.getMcpSession({
+      headers: req.headers
+    });
+
+    if (!session) {
+      res.statusCode = 401;
+      res.setHeader('WWW-Authenticate', 'Bearer realm="MCP"');
+      res.end(JSON.stringify({ error: 'Unauthorized' }));
+      return;
+    }
+
+    // Attach session to request for use in handler
+    req.mcpSession = session;
+    return handler(req, res);
+  };
+}
+`;
+}
+
 function generateServerIndex(serverName: string, tools: Tool[], baseUrl: string | undefined, port: number): string {
   const toolRegistrations = tools.map(tool => {
     return `
@@ -534,7 +647,7 @@ API Base:    \${apiConfig.baseUrl || 'Not configured'}
 `;
 }
 
-function generateReadme(serverName: string, tools: Tool[], baseUrl: string | undefined, port: number): string {
+function generateReadme(serverName: string, tools: Tool[], baseUrl: string | undefined, port: number, enableOAuth = false): string {
   const toolList = tools
     .map(t => `| \`${t.name}\` | ${t.method.toUpperCase()} | ${t.pathTemplate} | ${t.description.substring(0, 50)}${t.description.length > 50 ? '...' : ''} |`)
     .join('\n');
@@ -548,7 +661,7 @@ MCP server auto-generated from OpenAPI specification using the [mcp-use](https:/
 - 🛠️ **${tools.length} API Tools** - All operations from the OpenAPI spec
 - 🔍 **Built-in Inspector** - Test tools at \`/inspector\`
 - 📡 **Streamable HTTP** - Modern MCP transport
-- 🔐 **Authentication Support** - Bearer tokens & custom headers
+- 🔐 **Authentication Support** - Bearer tokens & custom headers${enableOAuth ? '\n- 🔒 **OAuth/MCP Provider** - Act as OAuth provider for MCP clients' : ''}
 - 🎨 **UI Widgets** - Compatible with ChatGPT and MCP-UI
 
 ## Quick Start
@@ -580,7 +693,12 @@ Then open http://localhost:${port}/inspector to test your tools!
 | \`API_KEY\` | Bearer token for Authorization header | - |
 | \`API_AUTH_HEADER\` | Custom auth header (format: \`Header:value\`) | - |
 | \`MCP_URL\` | Public MCP server URL (for widgets) | http://localhost:${port} |
-| \`ALLOWED_ORIGINS\` | Allowed origins in production (comma-separated) | - |
+| \`ALLOWED_ORIGINS\` | Allowed origins in production (comma-separated) | - |${enableOAuth ? `
+| \`ENABLE_OAUTH\` | Enable OAuth/MCP provider functionality | false |
+| \`OAUTH_LOGIN_PAGE\` | Path to login page for OAuth flow | /sign-in |
+| \`DATABASE_URL\` | Database connection string for Better Auth | - |
+| \`BETTER_AUTH_SECRET\` | Secret key for Better Auth | - |
+| \`BETTER_AUTH_URL\` | Public URL for Better Auth callbacks | http://localhost:${port} |` : ''}
 
 ## Connect to Claude Desktop
 
@@ -658,7 +776,47 @@ server.tool(
   }
 );
 \`\`\`
+${enableOAuth ? `
+## OAuth/MCP Provider Setup
 
+This server includes OAuth provider capabilities for MCP clients. To enable:
+
+1. **Set up a database** (PostgreSQL, MySQL, or SQLite)
+2. **Configure environment variables** in \`.env\`:
+   \`\`\`bash
+   ENABLE_OAUTH=true
+   DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+   BETTER_AUTH_SECRET=your-secure-random-secret
+   BETTER_AUTH_URL=http://localhost:${port}
+   OAUTH_LOGIN_PAGE=/sign-in
+   \`\`\`
+
+3. **Run database migrations**:
+   \`\`\`bash
+   npx better-auth migrate
+   \`\`\`
+
+4. **Create a login page** at the path specified in \`OAUTH_LOGIN_PAGE\`
+
+### OAuth Endpoints
+
+When OAuth is enabled, the following endpoints are available:
+
+- \`GET /.well-known/oauth-authorization-server\` - OAuth discovery metadata
+- \`GET /.well-known/oauth-protected-resource\` - Protected resource metadata
+- \`POST /oauth/authorize\` - OAuth authorization endpoint
+- \`POST /oauth/token\` - OAuth token endpoint
+
+### Using with MCP Clients
+
+MCP clients can authenticate using the OAuth flow. The server will:
+1. Redirect unauthenticated requests to the login page
+2. Issue access tokens after successful authentication
+3. Validate tokens on subsequent requests
+4. Provide session information with user ID and scopes
+
+See \`src/oauth-routes.js\` for implementation details.
+` : ''}
 ## Production Deployment
 
 ### Docker
@@ -703,6 +861,7 @@ export function generateMcpServerFiles(
     serverName = 'openapi-mcp-server',
     port = 3000,
     baseUrl,
+    enableOAuth = false,
   } = options;
 
   const tools = extractTools(spec, { baseUrl });
@@ -711,15 +870,15 @@ export function generateMcpServerFiles(
   const files: GeneratedFile[] = [
     {
       path: 'package.json',
-      content: generatePackageJson(serverName, tools, port),
+      content: generatePackageJson(serverName, tools, port, enableOAuth),
     },
     {
       path: '.env',
-      content: generateEnvFile(effectiveBaseUrl, port),
+      content: generateEnvFile(effectiveBaseUrl, port, enableOAuth),
     },
     {
       path: '.env.example',
-      content: generateEnvExampleFile(effectiveBaseUrl, port),
+      content: generateEnvExampleFile(effectiveBaseUrl, port, enableOAuth),
     },
     {
       path: 'src/http-client.js',
@@ -735,13 +894,27 @@ export function generateMcpServerFiles(
     },
     {
       path: 'README.md',
-      content: generateReadme(serverName, tools, effectiveBaseUrl, port),
+      content: generateReadme(serverName, tools, effectiveBaseUrl, port, enableOAuth),
     },
     {
       path: '.gitignore',
       content: 'node_modules/\n.env\n*.log\n',
     },
   ];
+
+  // Add OAuth-related files if enabled
+  if (enableOAuth) {
+    files.push(
+      {
+        path: 'src/auth-config.js',
+        content: generateAuthConfig(),
+      },
+      {
+        path: 'src/oauth-routes.js',
+        content: generateOAuthRoutes(),
+      }
+    );
+  }
 
   return files;
 }
