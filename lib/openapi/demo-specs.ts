@@ -1,459 +1,58 @@
 import { OpenAPISpec } from './types';
 
 /**
- * Petstore API - Classic OpenAPI example
- * A simple pet store with basic CRUD operations
+ * Web Search Tool - Search the web for information
+ * MCP tool for performing web searches across multiple search engines
  */
-export const petstoreSpec: OpenAPISpec = {
+export const webSearchSpec: OpenAPISpec = {
   openapi: '3.0.0',
   info: {
-    title: 'Petstore API',
+    title: 'Web Search Tool',
     version: '1.0.0',
-    description: 'A simple pet store API demonstrating basic CRUD operations',
+    description: 'MCP tool for searching the web and retrieving information from various search engines',
   },
   servers: [
     {
-      url: 'https://petstore.swagger.io/v2',
-      description: 'Production server',
+      url: 'https://api.search-tool.com/v1',
+      description: 'Production search server',
     },
   ],
   paths: {
-    '/pets': {
-      get: {
-        summary: 'List all pets',
-        operationId: 'listPets',
-        tags: ['pets'],
-        parameters: [
-          {
-            name: 'limit',
-            in: 'query',
-            description: 'How many items to return at one time (max 100)',
-            required: false,
-            schema: {
-              type: 'integer',
-              format: 'int32',
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'A paged array of pets',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: {
-                    $ref: '#/components/schemas/Pet',
-                  },
-                },
-              },
-            },
-          },
-          default: {
-            description: 'unexpected error',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Error',
-                },
-              },
-            },
-          },
-        },
-      },
+    '/search': {
       post: {
-        summary: 'Create a pet',
-        operationId: 'createPets',
-        tags: ['pets'],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/Pet',
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'Pet created',
-          },
-          default: {
-            description: 'unexpected error',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Error',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    '/pets/{petId}': {
-      get: {
-        summary: 'Info for a specific pet',
-        operationId: 'showPetById',
-        tags: ['pets'],
-        parameters: [
-          {
-            name: 'petId',
-            in: 'path',
-            required: true,
-            description: 'The id of the pet to retrieve',
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'Expected response to a valid request',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Pet',
-                },
-              },
-            },
-          },
-          default: {
-            description: 'unexpected error',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Error',
-                },
-              },
-            },
-          },
-        },
-      },
-      delete: {
-        summary: 'Delete a specific pet',
-        operationId: 'deletePet',
-        tags: ['pets'],
-        parameters: [
-          {
-            name: 'petId',
-            in: 'path',
-            required: true,
-            description: 'The id of the pet to delete',
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        responses: {
-          '204': {
-            description: 'Pet deleted',
-          },
-          default: {
-            description: 'unexpected error',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Error',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  components: {
-    schemas: {
-      Pet: {
-        type: 'object',
-        required: ['id', 'name'],
-        properties: {
-          id: {
-            type: 'integer',
-            format: 'int64',
-          },
-          name: {
-            type: 'string',
-          },
-          tag: {
-            type: 'string',
-          },
-        },
-      },
-      Error: {
-        type: 'object',
-        required: ['code', 'message'],
-        properties: {
-          code: {
-            type: 'integer',
-            format: 'int32',
-          },
-          message: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  },
-};
-
-/**
- * E-commerce API - Comprehensive online store example
- * Demonstrates authentication, complex schemas, and business logic
- */
-export const ecommerceSpec: OpenAPISpec = {
-  openapi: '3.0.0',
-  info: {
-    title: 'E-commerce API',
-    version: '2.0.0',
-    description: 'Comprehensive e-commerce platform API with products, orders, and user management',
-  },
-  servers: [
-    {
-      url: 'https://api.example-store.com/v2',
-      description: 'Production server',
-    },
-    {
-      url: 'https://sandbox-api.example-store.com/v2',
-      description: 'Sandbox server',
-    },
-  ],
-  paths: {
-    '/products': {
-      get: {
-        summary: 'List all products',
-        operationId: 'listProducts',
-        tags: ['products'],
-        parameters: [
-          {
-            name: 'category',
-            in: 'query',
-            description: 'Filter by category',
-            schema: {
-              type: 'string',
-            },
-          },
-          {
-            name: 'page',
-            in: 'query',
-            description: 'Page number',
-            schema: {
-              type: 'integer',
-              default: 1,
-            },
-          },
-          {
-            name: 'limit',
-            in: 'query',
-            description: 'Items per page',
-            schema: {
-              type: 'integer',
-              default: 20,
-              maximum: 100,
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'Successful response',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    products: {
-                      type: 'array',
-                      items: {
-                        $ref: '#/components/schemas/Product',
-                      },
-                    },
-                    total: {
-                      type: 'integer',
-                    },
-                    page: {
-                      type: 'integer',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      post: {
-        summary: 'Create a new product',
-        operationId: 'createProduct',
-        tags: ['products'],
-        security: [
-          {
-            bearerAuth: [],
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/ProductInput',
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'Product created',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Product',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    '/products/{productId}': {
-      get: {
-        summary: 'Get product details',
-        operationId: 'getProduct',
-        tags: ['products'],
-        parameters: [
-          {
-            name: 'productId',
-            in: 'path',
-            required: true,
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'Product details',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Product',
-                },
-              },
-            },
-          },
-          '404': {
-            description: 'Product not found',
-          },
-        },
-      },
-    },
-    '/orders': {
-      post: {
-        summary: 'Create a new order',
-        operationId: 'createOrder',
-        tags: ['orders'],
-        security: [
-          {
-            bearerAuth: [],
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/OrderInput',
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'Order created',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Order',
-                },
-              },
-            },
-          },
-        },
-      },
-      get: {
-        summary: 'List user orders',
-        operationId: 'listOrders',
-        tags: ['orders'],
-        security: [
-          {
-            bearerAuth: [],
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'List of orders',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: {
-                    $ref: '#/components/schemas/Order',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    '/users/register': {
-      post: {
-        summary: 'Register a new user',
-        operationId: 'registerUser',
-        tags: ['users'],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/UserRegistration',
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'User registered',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/User',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    '/users/login': {
-      post: {
-        summary: 'User login',
-        operationId: 'loginUser',
-        tags: ['users'],
+        summary: 'Perform a web search',
+        operationId: 'webSearch',
+        tags: ['search'],
+        description: 'Search the web using multiple search engines and return aggregated results',
         requestBody: {
           required: true,
           content: {
             'application/json': {
               schema: {
                 type: 'object',
+                required: ['query'],
                 properties: {
-                  email: {
+                  query: {
                     type: 'string',
-                    format: 'email',
+                    description: 'The search query',
                   },
-                  password: {
+                  maxResults: {
+                    type: 'integer',
+                    description: 'Maximum number of results to return',
+                    default: 10,
+                    minimum: 1,
+                    maximum: 100,
+                  },
+                  engine: {
                     type: 'string',
-                    format: 'password',
+                    enum: ['google', 'bing', 'duckduckgo', 'brave'],
+                    default: 'google',
+                    description: 'Search engine to use',
+                  },
+                  safeSearch: {
+                    type: 'boolean',
+                    default: true,
+                    description: 'Enable safe search filtering',
                   },
                 },
               },
@@ -462,272 +61,60 @@ export const ecommerceSpec: OpenAPISpec = {
         },
         responses: {
           '200': {
-            description: 'Login successful',
+            description: 'Search results',
             content: {
               'application/json': {
                 schema: {
-                  type: 'object',
-                  properties: {
-                    token: {
-                      type: 'string',
-                    },
-                    user: {
-                      $ref: '#/components/schemas/User',
-                    },
+                  $ref: '#/components/schemas/SearchResults',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/search/news': {
+      post: {
+        summary: 'Search for news articles',
+        operationId: 'newsSearch',
+        tags: ['search', 'news'],
+        description: 'Search for recent news articles',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['query'],
+                properties: {
+                  query: {
+                    type: 'string',
+                    description: 'The search query',
+                  },
+                  daysBack: {
+                    type: 'integer',
+                    description: 'Number of days back to search',
+                    default: 7,
+                    minimum: 1,
+                    maximum: 30,
+                  },
+                  language: {
+                    type: 'string',
+                    description: 'Language code (e.g., en, es, fr)',
+                    default: 'en',
                   },
                 },
               },
             },
           },
         },
-      },
-    },
-  },
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-      },
-    },
-    schemas: {
-      Product: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-          },
-          name: {
-            type: 'string',
-          },
-          description: {
-            type: 'string',
-          },
-          price: {
-            type: 'number',
-            format: 'double',
-          },
-          category: {
-            type: 'string',
-          },
-          imageUrl: {
-            type: 'string',
-            format: 'uri',
-          },
-          stock: {
-            type: 'integer',
-          },
-          createdAt: {
-            type: 'string',
-            format: 'date-time',
-          },
-        },
-      },
-      ProductInput: {
-        type: 'object',
-        required: ['name', 'price', 'category'],
-        properties: {
-          name: {
-            type: 'string',
-          },
-          description: {
-            type: 'string',
-          },
-          price: {
-            type: 'number',
-            format: 'double',
-          },
-          category: {
-            type: 'string',
-          },
-          imageUrl: {
-            type: 'string',
-            format: 'uri',
-          },
-          stock: {
-            type: 'integer',
-            default: 0,
-          },
-        },
-      },
-      Order: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-          },
-          userId: {
-            type: 'string',
-          },
-          items: {
-            type: 'array',
-            items: {
-              $ref: '#/components/schemas/OrderItem',
-            },
-          },
-          total: {
-            type: 'number',
-            format: 'double',
-          },
-          status: {
-            type: 'string',
-            enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-          },
-          createdAt: {
-            type: 'string',
-            format: 'date-time',
-          },
-        },
-      },
-      OrderItem: {
-        type: 'object',
-        properties: {
-          productId: {
-            type: 'string',
-          },
-          quantity: {
-            type: 'integer',
-          },
-          price: {
-            type: 'number',
-            format: 'double',
-          },
-        },
-      },
-      OrderInput: {
-        type: 'object',
-        required: ['items'],
-        properties: {
-          items: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                productId: {
-                  type: 'string',
-                },
-                quantity: {
-                  type: 'integer',
-                },
-              },
-            },
-          },
-        },
-      },
-      User: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-          },
-          email: {
-            type: 'string',
-            format: 'email',
-          },
-          firstName: {
-            type: 'string',
-          },
-          lastName: {
-            type: 'string',
-          },
-          createdAt: {
-            type: 'string',
-            format: 'date-time',
-          },
-        },
-      },
-      UserRegistration: {
-        type: 'object',
-        required: ['email', 'password', 'firstName', 'lastName'],
-        properties: {
-          email: {
-            type: 'string',
-            format: 'email',
-          },
-          password: {
-            type: 'string',
-            format: 'password',
-            minLength: 8,
-          },
-          firstName: {
-            type: 'string',
-          },
-          lastName: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  },
-};
-
-/**
- * Weather API - Simple weather service example
- * Demonstrates external API integration patterns
- */
-export const weatherSpec: OpenAPISpec = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Weather API',
-    version: '1.0.0',
-    description: 'Get current weather and forecasts for any location',
-  },
-  servers: [
-    {
-      url: 'https://api.weather-service.com/v1',
-      description: 'Production server',
-    },
-  ],
-  paths: {
-    '/weather/current': {
-      get: {
-        summary: 'Get current weather',
-        operationId: 'getCurrentWeather',
-        tags: ['weather'],
-        parameters: [
-          {
-            name: 'city',
-            in: 'query',
-            description: 'City name',
-            schema: {
-              type: 'string',
-            },
-          },
-          {
-            name: 'lat',
-            in: 'query',
-            description: 'Latitude',
-            schema: {
-              type: 'number',
-            },
-          },
-          {
-            name: 'lon',
-            in: 'query',
-            description: 'Longitude',
-            schema: {
-              type: 'number',
-            },
-          },
-          {
-            name: 'units',
-            in: 'query',
-            description: 'Units of measurement',
-            schema: {
-              type: 'string',
-              enum: ['metric', 'imperial'],
-              default: 'metric',
-            },
-          },
-        ],
         responses: {
           '200': {
-            description: 'Current weather data',
+            description: 'News search results',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/CurrentWeather',
+                  $ref: '#/components/schemas/NewsResults',
                 },
               },
             },
@@ -735,39 +122,45 @@ export const weatherSpec: OpenAPISpec = {
         },
       },
     },
-    '/weather/forecast': {
-      get: {
-        summary: 'Get weather forecast',
-        operationId: 'getWeatherForecast',
-        tags: ['weather'],
-        parameters: [
-          {
-            name: 'city',
-            in: 'query',
-            description: 'City name',
-            schema: {
-              type: 'string',
+    '/search/images': {
+      post: {
+        summary: 'Search for images',
+        operationId: 'imageSearch',
+        tags: ['search', 'images'],
+        description: 'Search for images on the web',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['query'],
+                properties: {
+                  query: {
+                    type: 'string',
+                    description: 'The search query',
+                  },
+                  maxResults: {
+                    type: 'integer',
+                    default: 20,
+                  },
+                  size: {
+                    type: 'string',
+                    enum: ['small', 'medium', 'large', 'any'],
+                    default: 'any',
+                  },
+                },
+              },
             },
           },
-          {
-            name: 'days',
-            in: 'query',
-            description: 'Number of days to forecast',
-            schema: {
-              type: 'integer',
-              minimum: 1,
-              maximum: 14,
-              default: 7,
-            },
-          },
-        ],
+        },
         responses: {
           '200': {
-            description: 'Weather forecast',
+            description: 'Image search results',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/WeatherForecast',
+                  $ref: '#/components/schemas/ImageResults',
                 },
               },
             },
@@ -778,68 +171,122 @@ export const weatherSpec: OpenAPISpec = {
   },
   components: {
     schemas: {
-      CurrentWeather: {
+      SearchResults: {
         type: 'object',
         properties: {
-          location: {
+          query: {
             type: 'string',
           },
-          temperature: {
-            type: 'number',
-          },
-          feelsLike: {
-            type: 'number',
-          },
-          humidity: {
+          totalResults: {
             type: 'integer',
           },
-          pressure: {
-            type: 'integer',
+          results: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/SearchResult',
+            },
           },
-          windSpeed: {
+          searchTime: {
             type: 'number',
-          },
-          description: {
-            type: 'string',
-          },
-          timestamp: {
-            type: 'string',
-            format: 'date-time',
+            description: 'Search time in seconds',
           },
         },
       },
-      WeatherForecast: {
+      SearchResult: {
         type: 'object',
         properties: {
-          location: {
+          title: {
             type: 'string',
           },
-          forecast: {
+          url: {
+            type: 'string',
+            format: 'uri',
+          },
+          snippet: {
+            type: 'string',
+          },
+          displayUrl: {
+            type: 'string',
+          },
+        },
+      },
+      NewsResults: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+          },
+          articles: {
             type: 'array',
             items: {
-              $ref: '#/components/schemas/ForecastDay',
+              $ref: '#/components/schemas/NewsArticle',
             },
           },
         },
       },
-      ForecastDay: {
+      NewsArticle: {
         type: 'object',
         properties: {
-          date: {
-            type: 'string',
-            format: 'date',
-          },
-          tempMax: {
-            type: 'number',
-          },
-          tempMin: {
-            type: 'number',
-          },
-          description: {
+          title: {
             type: 'string',
           },
-          precipitation: {
-            type: 'number',
+          url: {
+            type: 'string',
+            format: 'uri',
+          },
+          source: {
+            type: 'string',
+          },
+          publishedAt: {
+            type: 'string',
+            format: 'date-time',
+          },
+          snippet: {
+            type: 'string',
+          },
+          imageUrl: {
+            type: 'string',
+            format: 'uri',
+          },
+        },
+      },
+      ImageResults: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+          },
+          images: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/ImageResult',
+            },
+          },
+        },
+      },
+      ImageResult: {
+        type: 'object',
+        properties: {
+          url: {
+            type: 'string',
+            format: 'uri',
+          },
+          thumbnailUrl: {
+            type: 'string',
+            format: 'uri',
+          },
+          title: {
+            type: 'string',
+          },
+          width: {
+            type: 'integer',
+          },
+          height: {
+            type: 'integer',
+          },
+          sourceUrl: {
+            type: 'string',
+            format: 'uri',
           },
         },
       },
@@ -848,268 +295,32 @@ export const weatherSpec: OpenAPISpec = {
 };
 
 /**
- * User Management API - Complete user lifecycle example
- * Demonstrates authentication, authorization, and CRUD operations
+ * Computer Use Tool - Control computer operations
+ * MCP tool for executing commands, managing files, and controlling the OS
  */
-export const userManagementSpec: OpenAPISpec = {
+export const computerUseSpec: OpenAPISpec = {
   openapi: '3.0.0',
   info: {
-    title: 'User Management API',
+    title: 'Computer Use Tool',
     version: '1.0.0',
-    description: 'Complete user lifecycle management with authentication and authorization',
+    description: 'MCP tool for computer control, file operations, and system automation',
   },
   servers: [
     {
-      url: 'https://api.users.example.com/v1',
-      description: 'Production server',
+      url: 'http://localhost:8080/v1',
+      description: 'Local computer control server',
     },
   ],
   paths: {
-    '/users': {
-      get: {
-        summary: 'List all users',
-        operationId: 'listUsers',
-        tags: ['users'],
-        security: [
-          {
-            apiKey: [],
-          },
-        ],
-        parameters: [
-          {
-            name: 'page',
-            in: 'query',
-            schema: {
-              type: 'integer',
-              default: 1,
-            },
-          },
-          {
-            name: 'limit',
-            in: 'query',
-            schema: {
-              type: 'integer',
-              default: 20,
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'List of users',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    users: {
-                      type: 'array',
-                      items: {
-                        $ref: '#/components/schemas/User',
-                      },
-                    },
-                    total: {
-                      type: 'integer',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+    '/execute': {
       post: {
-        summary: 'Create a new user',
-        operationId: 'createUser',
-        tags: ['users'],
+        summary: 'Execute a command',
+        operationId: 'executeCommand',
+        tags: ['system'],
+        description: 'Execute a shell command on the system',
         security: [
           {
             apiKey: [],
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/UserInput',
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'User created',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/User',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    '/users/{userId}': {
-      get: {
-        summary: 'Get user by ID',
-        operationId: 'getUserById',
-        tags: ['users'],
-        security: [
-          {
-            apiKey: [],
-          },
-        ],
-        parameters: [
-          {
-            name: 'userId',
-            in: 'path',
-            required: true,
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'User details',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/User',
-                },
-              },
-            },
-          },
-          '404': {
-            description: 'User not found',
-          },
-        },
-      },
-      put: {
-        summary: 'Update user',
-        operationId: 'updateUser',
-        tags: ['users'],
-        security: [
-          {
-            apiKey: [],
-          },
-        ],
-        parameters: [
-          {
-            name: 'userId',
-            in: 'path',
-            required: true,
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/UserInput',
-              },
-            },
-          },
-        },
-        responses: {
-          '200': {
-            description: 'User updated',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/User',
-                },
-              },
-            },
-          },
-        },
-      },
-      delete: {
-        summary: 'Delete user',
-        operationId: 'deleteUser',
-        tags: ['users'],
-        security: [
-          {
-            apiKey: [],
-          },
-        ],
-        parameters: [
-          {
-            name: 'userId',
-            in: 'path',
-            required: true,
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        responses: {
-          '204': {
-            description: 'User deleted',
-          },
-          '404': {
-            description: 'User not found',
-          },
-        },
-      },
-    },
-    '/users/{userId}/roles': {
-      get: {
-        summary: 'Get user roles',
-        operationId: 'getUserRoles',
-        tags: ['users', 'roles'],
-        security: [
-          {
-            apiKey: [],
-          },
-        ],
-        parameters: [
-          {
-            name: 'userId',
-            in: 'path',
-            required: true,
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'User roles',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: {
-                    $ref: '#/components/schemas/Role',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      post: {
-        summary: 'Assign role to user',
-        operationId: 'assignUserRole',
-        tags: ['users', 'roles'],
-        security: [
-          {
-            apiKey: [],
-          },
-        ],
-        parameters: [
-          {
-            name: 'userId',
-            in: 'path',
-            required: true,
-            schema: {
-              type: 'string',
-            },
           },
         ],
         requestBody: {
@@ -1118,9 +329,20 @@ export const userManagementSpec: OpenAPISpec = {
             'application/json': {
               schema: {
                 type: 'object',
+                required: ['command'],
                 properties: {
-                  roleId: {
+                  command: {
                     type: 'string',
+                    description: 'Shell command to execute',
+                  },
+                  workingDirectory: {
+                    type: 'string',
+                    description: 'Working directory for command execution',
+                  },
+                  timeout: {
+                    type: 'integer',
+                    description: 'Command timeout in seconds',
+                    default: 30,
                   },
                 },
               },
@@ -1129,7 +351,248 @@ export const userManagementSpec: OpenAPISpec = {
         },
         responses: {
           '200': {
-            description: 'Role assigned',
+            description: 'Command execution result',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/CommandResult',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/files/read': {
+      post: {
+        summary: 'Read a file',
+        operationId: 'readFile',
+        tags: ['files'],
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['path'],
+                properties: {
+                  path: {
+                    type: 'string',
+                    description: 'File path to read',
+                  },
+                  encoding: {
+                    type: 'string',
+                    enum: ['utf8', 'base64', 'binary'],
+                    default: 'utf8',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'File contents',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/FileContent',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/files/write': {
+      post: {
+        summary: 'Write to a file',
+        operationId: 'writeFile',
+        tags: ['files'],
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['path', 'content'],
+                properties: {
+                  path: {
+                    type: 'string',
+                    description: 'File path to write',
+                  },
+                  content: {
+                    type: 'string',
+                    description: 'Content to write',
+                  },
+                  encoding: {
+                    type: 'string',
+                    enum: ['utf8', 'base64'],
+                    default: 'utf8',
+                  },
+                  createDirs: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Create parent directories if they dont exist',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'File written successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/WriteResult',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/screenshot': {
+      post: {
+        summary: 'Take a screenshot',
+        operationId: 'takeScreenshot',
+        tags: ['screen'],
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  format: {
+                    type: 'string',
+                    enum: ['png', 'jpeg'],
+                    default: 'png',
+                  },
+                  quality: {
+                    type: 'integer',
+                    minimum: 1,
+                    maximum: 100,
+                    default: 90,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Screenshot captured',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Screenshot',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/mouse/click': {
+      post: {
+        summary: 'Click mouse at coordinates',
+        operationId: 'mouseClick',
+        tags: ['input'],
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['x', 'y'],
+                properties: {
+                  x: {
+                    type: 'integer',
+                    description: 'X coordinate',
+                  },
+                  y: {
+                    type: 'integer',
+                    description: 'Y coordinate',
+                  },
+                  button: {
+                    type: 'string',
+                    enum: ['left', 'right', 'middle'],
+                    default: 'left',
+                  },
+                  clickCount: {
+                    type: 'integer',
+                    default: 1,
+                    minimum: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Click executed',
+          },
+        },
+      },
+    },
+    '/keyboard/type': {
+      post: {
+        summary: 'Type text using keyboard',
+        operationId: 'keyboardType',
+        tags: ['input'],
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['text'],
+                properties: {
+                  text: {
+                    type: 'string',
+                    description: 'Text to type',
+                  },
+                  delay: {
+                    type: 'integer',
+                    description: 'Delay between keystrokes in milliseconds',
+                    default: 0,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Text typed successfully',
           },
         },
       },
@@ -1144,66 +607,1129 @@ export const userManagementSpec: OpenAPISpec = {
       },
     },
     schemas: {
-      User: {
+      CommandResult: {
         type: 'object',
         properties: {
-          id: {
+          stdout: {
             type: 'string',
           },
-          username: {
+          stderr: {
             type: 'string',
           },
-          email: {
-            type: 'string',
-            format: 'email',
+          exitCode: {
+            type: 'integer',
           },
-          firstName: {
+          executionTime: {
+            type: 'number',
+            description: 'Execution time in seconds',
+          },
+        },
+      },
+      FileContent: {
+        type: 'object',
+        properties: {
+          path: {
             type: 'string',
           },
-          lastName: {
+          content: {
             type: 'string',
           },
-          active: {
+          size: {
+            type: 'integer',
+            description: 'File size in bytes',
+          },
+          encoding: {
+            type: 'string',
+          },
+        },
+      },
+      WriteResult: {
+        type: 'object',
+        properties: {
+          path: {
+            type: 'string',
+          },
+          bytesWritten: {
+            type: 'integer',
+          },
+          success: {
             type: 'boolean',
           },
-          createdAt: {
+        },
+      },
+      Screenshot: {
+        type: 'object',
+        properties: {
+          imageData: {
             type: 'string',
-            format: 'date-time',
+            description: 'Base64 encoded image',
           },
-          updatedAt: {
+          width: {
+            type: 'integer',
+          },
+          height: {
+            type: 'integer',
+          },
+          format: {
+            type: 'string',
+          },
+          timestamp: {
             type: 'string',
             format: 'date-time',
           },
         },
       },
-      UserInput: {
-        type: 'object',
-        required: ['username', 'email', 'firstName', 'lastName'],
-        properties: {
-          username: {
-            type: 'string',
+    },
+  },
+};
+
+/**
+ * Browser Use Tool - Automate web browser
+ * MCP tool for browser automation and web scraping
+ */
+export const browserUseSpec: OpenAPISpec = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Browser Use Tool',
+    version: '1.0.0',
+    description: 'MCP tool for browser automation, web scraping, and interaction',
+  },
+  servers: [
+    {
+      url: 'http://localhost:9222/v1',
+      description: 'Local browser automation server',
+    },
+  ],
+  paths: {
+    '/browser/navigate': {
+      post: {
+        summary: 'Navigate to a URL',
+        operationId: 'navigateTo',
+        tags: ['navigation'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['url'],
+                properties: {
+                  url: {
+                    type: 'string',
+                    format: 'uri',
+                    description: 'URL to navigate to',
+                  },
+                  waitUntil: {
+                    type: 'string',
+                    enum: ['load', 'domcontentloaded', 'networkidle'],
+                    default: 'load',
+                  },
+                },
+              },
+            },
           },
-          email: {
-            type: 'string',
-            format: 'email',
-          },
-          firstName: {
-            type: 'string',
-          },
-          lastName: {
-            type: 'string',
-          },
-          password: {
-            type: 'string',
-            format: 'password',
-          },
-          active: {
-            type: 'boolean',
-            default: true,
+        },
+        responses: {
+          '200': {
+            description: 'Navigation successful',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/NavigationResult',
+                },
+              },
+            },
           },
         },
       },
-      Role: {
+    },
+    '/browser/click': {
+      post: {
+        summary: 'Click an element',
+        operationId: 'clickElement',
+        tags: ['interaction'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['selector'],
+                properties: {
+                  selector: {
+                    type: 'string',
+                    description: 'CSS selector for element to click',
+                  },
+                  waitForSelector: {
+                    type: 'boolean',
+                    default: true,
+                  },
+                  timeout: {
+                    type: 'integer',
+                    description: 'Timeout in milliseconds',
+                    default: 30000,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Element clicked successfully',
+          },
+        },
+      },
+    },
+    '/browser/type': {
+      post: {
+        summary: 'Type into an input field',
+        operationId: 'typeIntoField',
+        tags: ['interaction'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['selector', 'text'],
+                properties: {
+                  selector: {
+                    type: 'string',
+                    description: 'CSS selector for input field',
+                  },
+                  text: {
+                    type: 'string',
+                    description: 'Text to type',
+                  },
+                  clearFirst: {
+                    type: 'boolean',
+                    default: true,
+                    description: 'Clear field before typing',
+                  },
+                  delay: {
+                    type: 'integer',
+                    description: 'Delay between keystrokes in milliseconds',
+                    default: 0,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Text typed successfully',
+          },
+        },
+      },
+    },
+    '/browser/screenshot': {
+      post: {
+        summary: 'Take a screenshot of the page',
+        operationId: 'takePageScreenshot',
+        tags: ['capture'],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  fullPage: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Capture full page',
+                  },
+                  selector: {
+                    type: 'string',
+                    description: 'CSS selector to screenshot specific element',
+                  },
+                  format: {
+                    type: 'string',
+                    enum: ['png', 'jpeg'],
+                    default: 'png',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Screenshot captured',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Screenshot',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/extract': {
+      post: {
+        summary: 'Extract data from page',
+        operationId: 'extractData',
+        tags: ['scraping'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['selector'],
+                properties: {
+                  selector: {
+                    type: 'string',
+                    description: 'CSS selector for elements to extract',
+                  },
+                  attribute: {
+                    type: 'string',
+                    description: 'Attribute to extract (default: textContent)',
+                  },
+                  multiple: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Extract multiple elements',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Data extracted',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ExtractedData',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/pdf': {
+      post: {
+        summary: 'Generate PDF of current page',
+        operationId: 'generatePDF',
+        tags: ['capture'],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  format: {
+                    type: 'string',
+                    enum: ['letter', 'a4', 'legal'],
+                    default: 'a4',
+                  },
+                  landscape: {
+                    type: 'boolean',
+                    default: false,
+                  },
+                  printBackground: {
+                    type: 'boolean',
+                    default: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'PDF generated',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/PDFResult',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  components: {
+    schemas: {
+      NavigationResult: {
+        type: 'object',
+        properties: {
+          url: {
+            type: 'string',
+            format: 'uri',
+          },
+          title: {
+            type: 'string',
+          },
+          status: {
+            type: 'integer',
+          },
+          loadTime: {
+            type: 'number',
+            description: 'Page load time in seconds',
+          },
+        },
+      },
+      Screenshot: {
+        type: 'object',
+        properties: {
+          imageData: {
+            type: 'string',
+            description: 'Base64 encoded image',
+          },
+          width: {
+            type: 'integer',
+          },
+          height: {
+            type: 'integer',
+          },
+          format: {
+            type: 'string',
+          },
+        },
+      },
+      ExtractedData: {
+        type: 'object',
+        properties: {
+          selector: {
+            type: 'string',
+          },
+          data: {
+            oneOf: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            ],
+          },
+          count: {
+            type: 'integer',
+          },
+        },
+      },
+      PDFResult: {
+        type: 'object',
+        properties: {
+          pdfData: {
+            type: 'string',
+            description: 'Base64 encoded PDF',
+          },
+          size: {
+            type: 'integer',
+            description: 'PDF size in bytes',
+          },
+        },
+      },
+    },
+  },
+};
+
+/**
+ * API Calling Tool - Make HTTP API requests
+ * MCP tool for calling external APIs with authentication and data transformation
+ */
+export const apiCallingSpec: OpenAPISpec = {
+  openapi: '3.0.0',
+  info: {
+    title: 'API Calling Tool',
+    version: '1.0.0',
+    description: 'MCP tool for making HTTP requests to external APIs with auth and data transformation',
+  },
+  servers: [
+    {
+      url: 'https://api.proxy-service.com/v1',
+      description: 'API proxy server',
+    },
+  ],
+  paths: {
+    '/request': {
+      post: {
+        summary: 'Make an HTTP request',
+        operationId: 'makeRequest',
+        tags: ['http'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['url', 'method'],
+                properties: {
+                  url: {
+                    type: 'string',
+                    format: 'uri',
+                    description: 'Target API URL',
+                  },
+                  method: {
+                    type: 'string',
+                    enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+                    description: 'HTTP method',
+                  },
+                  headers: {
+                    type: 'object',
+                    additionalProperties: {
+                      type: 'string',
+                    },
+                    description: 'Request headers',
+                  },
+                  body: {
+                    type: 'object',
+                    description: 'Request body (for POST/PUT/PATCH)',
+                  },
+                  queryParams: {
+                    type: 'object',
+                    additionalProperties: {
+                      type: 'string',
+                    },
+                    description: 'Query parameters',
+                  },
+                  timeout: {
+                    type: 'integer',
+                    description: 'Request timeout in milliseconds',
+                    default: 30000,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Request completed',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/HTTPResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/request/graphql': {
+      post: {
+        summary: 'Make a GraphQL query',
+        operationId: 'graphqlQuery',
+        tags: ['graphql'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['endpoint', 'query'],
+                properties: {
+                  endpoint: {
+                    type: 'string',
+                    format: 'uri',
+                    description: 'GraphQL endpoint URL',
+                  },
+                  query: {
+                    type: 'string',
+                    description: 'GraphQL query or mutation',
+                  },
+                  variables: {
+                    type: 'object',
+                    description: 'Query variables',
+                  },
+                  headers: {
+                    type: 'object',
+                    additionalProperties: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'GraphQL response',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/GraphQLResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/request/batch': {
+      post: {
+        summary: 'Make multiple requests in batch',
+        operationId: 'batchRequests',
+        tags: ['http', 'batch'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['requests'],
+                properties: {
+                  requests: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      required: ['id', 'url', 'method'],
+                      properties: {
+                        id: {
+                          type: 'string',
+                          description: 'Request identifier',
+                        },
+                        url: {
+                          type: 'string',
+                          format: 'uri',
+                        },
+                        method: {
+                          type: 'string',
+                          enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+                        },
+                        headers: {
+                          type: 'object',
+                          additionalProperties: {
+                            type: 'string',
+                          },
+                        },
+                        body: {
+                          type: 'object',
+                        },
+                      },
+                    },
+                  },
+                  parallel: {
+                    type: 'boolean',
+                    default: true,
+                    description: 'Execute requests in parallel',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Batch results',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BatchResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/auth/oauth': {
+      post: {
+        summary: 'Perform OAuth authentication',
+        operationId: 'oauthAuth',
+        tags: ['auth'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['tokenUrl', 'clientId', 'clientSecret'],
+                properties: {
+                  tokenUrl: {
+                    type: 'string',
+                    format: 'uri',
+                    description: 'OAuth token endpoint',
+                  },
+                  clientId: {
+                    type: 'string',
+                  },
+                  clientSecret: {
+                    type: 'string',
+                  },
+                  scope: {
+                    type: 'string',
+                  },
+                  grantType: {
+                    type: 'string',
+                    enum: ['client_credentials', 'password', 'authorization_code'],
+                    default: 'client_credentials',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'OAuth token obtained',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/OAuthToken',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  components: {
+    schemas: {
+      HTTPResponse: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'integer',
+          },
+          statusText: {
+            type: 'string',
+          },
+          headers: {
+            type: 'object',
+            additionalProperties: {
+              type: 'string',
+            },
+          },
+          body: {
+            type: 'object',
+          },
+          responseTime: {
+            type: 'number',
+            description: 'Response time in milliseconds',
+          },
+        },
+      },
+      GraphQLResponse: {
+        type: 'object',
+        properties: {
+          data: {
+            type: 'object',
+          },
+          errors: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                message: {
+                  type: 'string',
+                },
+                locations: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                  },
+                },
+                path: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      BatchResponse: {
+        type: 'object',
+        properties: {
+          results: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                response: {
+                  $ref: '#/components/schemas/HTTPResponse',
+                },
+                error: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+          totalTime: {
+            type: 'number',
+            description: 'Total execution time in milliseconds',
+          },
+        },
+      },
+      OAuthToken: {
+        type: 'object',
+        properties: {
+          accessToken: {
+            type: 'string',
+          },
+          tokenType: {
+            type: 'string',
+          },
+          expiresIn: {
+            type: 'integer',
+          },
+          refreshToken: {
+            type: 'string',
+          },
+          scope: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  },
+};
+
+/**
+ * Buying Agent Tool - Automated purchase agent
+ * MCP tool for finding products, comparing prices, and making purchases
+ */
+export const buyingAgentSpec: OpenAPISpec = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Buying Agent Tool',
+    version: '1.0.0',
+    description: 'MCP tool for automated product search, price comparison, and purchase assistance',
+  },
+  servers: [
+    {
+      url: 'https://api.buying-agent.com/v1',
+      description: 'Buying agent server',
+    },
+  ],
+  paths: {
+    '/products/search': {
+      post: {
+        summary: 'Search for products',
+        operationId: 'searchProducts',
+        tags: ['products'],
+        description: 'Search for products across multiple retailers',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['query'],
+                properties: {
+                  query: {
+                    type: 'string',
+                    description: 'Product search query',
+                  },
+                  category: {
+                    type: 'string',
+                    enum: ['electronics', 'clothing', 'home', 'books', 'toys', 'all'],
+                    default: 'all',
+                  },
+                  minPrice: {
+                    type: 'number',
+                    description: 'Minimum price filter',
+                  },
+                  maxPrice: {
+                    type: 'number',
+                    description: 'Maximum price filter',
+                  },
+                  sortBy: {
+                    type: 'string',
+                    enum: ['relevance', 'price_low', 'price_high', 'rating'],
+                    default: 'relevance',
+                  },
+                  limit: {
+                    type: 'integer',
+                    default: 20,
+                    maximum: 100,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Product search results',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ProductSearchResults',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/products/{productId}/compare': {
+      get: {
+        summary: 'Compare product prices',
+        operationId: 'compareProductPrices',
+        tags: ['products', 'comparison'],
+        description: 'Compare prices for a product across retailers',
+        parameters: [
+          {
+            name: 'productId',
+            in: 'path',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Price comparison results',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/PriceComparison',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/products/{productId}/reviews': {
+      get: {
+        summary: 'Get product reviews',
+        operationId: 'getProductReviews',
+        tags: ['products', 'reviews'],
+        parameters: [
+          {
+            name: 'productId',
+            in: 'path',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            schema: {
+              type: 'integer',
+              default: 10,
+            },
+          },
+          {
+            name: 'sortBy',
+            in: 'query',
+            schema: {
+              type: 'string',
+              enum: ['recent', 'helpful', 'rating_high', 'rating_low'],
+              default: 'helpful',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Product reviews',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ProductReviews',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/deals/today': {
+      get: {
+        summary: 'Get todays deals',
+        operationId: 'getTodaysDeals',
+        tags: ['deals'],
+        parameters: [
+          {
+            name: 'category',
+            in: 'query',
+            schema: {
+              type: 'string',
+              enum: ['electronics', 'clothing', 'home', 'books', 'toys', 'all'],
+              default: 'all',
+            },
+          },
+          {
+            name: 'minDiscount',
+            in: 'query',
+            schema: {
+              type: 'integer',
+              description: 'Minimum discount percentage',
+              minimum: 0,
+              maximum: 100,
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Todays deals',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/DealsResults',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/cart/add': {
+      post: {
+        summary: 'Add product to cart',
+        operationId: 'addToCart',
+        tags: ['cart'],
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['productId', 'retailerId'],
+                properties: {
+                  productId: {
+                    type: 'string',
+                  },
+                  retailerId: {
+                    type: 'string',
+                  },
+                  quantity: {
+                    type: 'integer',
+                    default: 1,
+                    minimum: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Product added to cart',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Cart',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/recommendations': {
+      post: {
+        summary: 'Get product recommendations',
+        operationId: 'getRecommendations',
+        tags: ['recommendations'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['preferences'],
+                properties: {
+                  preferences: {
+                    type: 'object',
+                    properties: {
+                      categories: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                        },
+                      },
+                      priceRange: {
+                        type: 'object',
+                        properties: {
+                          min: {
+                            type: 'number',
+                          },
+                          max: {
+                            type: 'number',
+                          },
+                        },
+                      },
+                      brands: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                  limit: {
+                    type: 'integer',
+                    default: 10,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Product recommendations',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Recommendations',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+      },
+    },
+    schemas: {
+      ProductSearchResults: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+          },
+          totalResults: {
+            type: 'integer',
+          },
+          products: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/Product',
+            },
+          },
+        },
+      },
+      Product: {
         type: 'object',
         properties: {
           id: {
@@ -1215,11 +1741,199 @@ export const userManagementSpec: OpenAPISpec = {
           description: {
             type: 'string',
           },
-          permissions: {
+          price: {
+            type: 'number',
+          },
+          currency: {
+            type: 'string',
+            default: 'USD',
+          },
+          retailer: {
+            type: 'string',
+          },
+          imageUrl: {
+            type: 'string',
+            format: 'uri',
+          },
+          rating: {
+            type: 'number',
+            minimum: 0,
+            maximum: 5,
+          },
+          reviewCount: {
+            type: 'integer',
+          },
+          inStock: {
+            type: 'boolean',
+          },
+          url: {
+            type: 'string',
+            format: 'uri',
+          },
+        },
+      },
+      PriceComparison: {
+        type: 'object',
+        properties: {
+          productId: {
+            type: 'string',
+          },
+          productName: {
+            type: 'string',
+          },
+          prices: {
             type: 'array',
             items: {
-              type: 'string',
+              type: 'object',
+              properties: {
+                retailer: {
+                  type: 'string',
+                },
+                price: {
+                  type: 'number',
+                },
+                shipping: {
+                  type: 'number',
+                },
+                totalPrice: {
+                  type: 'number',
+                },
+                inStock: {
+                  type: 'boolean',
+                },
+                url: {
+                  type: 'string',
+                  format: 'uri',
+                },
+              },
             },
+          },
+          lowestPrice: {
+            type: 'number',
+          },
+          bestRetailer: {
+            type: 'string',
+          },
+        },
+      },
+      ProductReviews: {
+        type: 'object',
+        properties: {
+          productId: {
+            type: 'string',
+          },
+          averageRating: {
+            type: 'number',
+          },
+          totalReviews: {
+            type: 'integer',
+          },
+          reviews: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                rating: {
+                  type: 'integer',
+                  minimum: 1,
+                  maximum: 5,
+                },
+                title: {
+                  type: 'string',
+                },
+                text: {
+                  type: 'string',
+                },
+                author: {
+                  type: 'string',
+                },
+                date: {
+                  type: 'string',
+                  format: 'date',
+                },
+                helpful: {
+                  type: 'integer',
+                },
+                verified: {
+                  type: 'boolean',
+                },
+              },
+            },
+          },
+        },
+      },
+      DealsResults: {
+        type: 'object',
+        properties: {
+          deals: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                product: {
+                  $ref: '#/components/schemas/Product',
+                },
+                originalPrice: {
+                  type: 'number',
+                },
+                discountPercentage: {
+                  type: 'integer',
+                },
+                savings: {
+                  type: 'number',
+                },
+                expiresAt: {
+                  type: 'string',
+                  format: 'date-time',
+                },
+              },
+            },
+          },
+        },
+      },
+      Cart: {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                product: {
+                  $ref: '#/components/schemas/Product',
+                },
+                quantity: {
+                  type: 'integer',
+                },
+                subtotal: {
+                  type: 'number',
+                },
+              },
+            },
+          },
+          total: {
+            type: 'number',
+          },
+          itemCount: {
+            type: 'integer',
+          },
+        },
+      },
+      Recommendations: {
+        type: 'object',
+        properties: {
+          products: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/Product',
+            },
+          },
+          reason: {
+            type: 'string',
+            description: 'Why these products were recommended',
           },
         },
       },
@@ -1228,28 +1942,33 @@ export const userManagementSpec: OpenAPISpec = {
 };
 
 /**
- * All available demo specs
+ * All available demo specs - MCP Tool Examples
  */
 export const demoSpecs = {
-  petstore: {
-    name: 'Petstore API',
-    description: 'Classic pet store example with basic CRUD operations',
-    spec: petstoreSpec,
+  webSearch: {
+    name: 'Web Search Tool',
+    description: 'Search the web, news, and images using various search engines',
+    spec: webSearchSpec,
   },
-  ecommerce: {
-    name: 'E-commerce API',
-    description: 'Complete online store with products, orders, and authentication',
-    spec: ecommerceSpec,
+  computerUse: {
+    name: 'Computer Use Tool',
+    description: 'Control computer operations, execute commands, and automate tasks',
+    spec: computerUseSpec,
   },
-  weather: {
-    name: 'Weather API',
-    description: 'Weather service with current conditions and forecasts',
-    spec: weatherSpec,
+  browserUse: {
+    name: 'Browser Use Tool',
+    description: 'Automate web browsers, scrape data, and interact with web pages',
+    spec: browserUseSpec,
   },
-  userManagement: {
-    name: 'User Management API',
-    description: 'User lifecycle management with roles and permissions',
-    spec: userManagementSpec,
+  apiCalling: {
+    name: 'API Calling Tool',
+    description: 'Make HTTP requests to external APIs with auth and data transformation',
+    spec: apiCallingSpec,
+  },
+  buyingAgent: {
+    name: 'Buying Agent Tool',
+    description: 'Search products, compare prices, and assist with purchases',
+    spec: buyingAgentSpec,
   },
 } as const;
 
