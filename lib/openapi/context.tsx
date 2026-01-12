@@ -26,7 +26,7 @@ import {
   createDefaultTag,
   createDefaultSecurityScheme,
 } from './utils';
-import { petstoreSpec } from './demo-specs';
+import { webSearchSpec } from './demo-specs';
 
 // Storage key
 const STORAGE_KEY = 'openapi3';
@@ -642,7 +642,7 @@ function reducer(state: State, action: Action): State {
     case 'LOAD_DEMO':
       return {
         ...state,
-        spec: preProcessDefinition(clone(petstoreSpec)),
+        spec: preProcessDefinition(clone(webSearchSpec)),
       };
 
     default:
@@ -663,7 +663,7 @@ const OpenAPIContext = createContext<OpenAPIContextType | null>(null);
 // Provider component
 export function OpenAPIProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
-    spec: preProcessDefinition(clone(petstoreSpec)),
+    spec: preProcessDefinition(clone(webSearchSpec)),
     snapshot: null,
   });
 
