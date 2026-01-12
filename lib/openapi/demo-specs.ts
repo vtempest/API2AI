@@ -1942,6 +1942,512 @@ export const buyingAgentSpec: OpenAPISpec = {
 };
 
 /**
+ * Agent Browser Tool - Browser automation via MCP
+ * MCP tool for automating browser interactions, testing, and data extraction
+ */
+export const agentBrowserSpec: OpenAPISpec = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Agent Browser Tool',
+    version: '1.0.0',
+    description: 'MCP tool for automating browser interactions, web testing, form filling, screenshots, and data extraction',
+  },
+  servers: [
+    {
+      url: 'https://api.agent-browser.com/v1',
+      description: 'Agent Browser MCP Server',
+    },
+  ],
+  paths: {
+    '/browser/open': {
+      post: {
+        summary: 'Navigate to a URL',
+        operationId: 'browserOpen',
+        tags: ['navigation'],
+        description: 'Open a browser and navigate to the specified URL',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['url'],
+                properties: {
+                  url: {
+                    type: 'string',
+                    format: 'uri',
+                    description: 'The URL to navigate to',
+                  },
+                  sessionId: {
+                    type: 'string',
+                    description: 'Browser session ID for multi-session support',
+                  },
+                  headed: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Show browser window (headed mode)',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Successfully navigated to URL',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BrowserResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/snapshot': {
+      post: {
+        summary: 'Get page snapshot',
+        operationId: 'browserSnapshot',
+        tags: ['analysis'],
+        description: 'Get accessibility tree snapshot with interactive elements and refs',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  interactive: {
+                    type: 'boolean',
+                    default: true,
+                    description: 'Return only interactive elements',
+                  },
+                  compact: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Use compact output format',
+                  },
+                  depth: {
+                    type: 'integer',
+                    minimum: 1,
+                    maximum: 10,
+                    description: 'Maximum tree depth',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Page snapshot with element refs',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/SnapshotResult',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/click': {
+      post: {
+        summary: 'Click an element',
+        operationId: 'browserClick',
+        tags: ['interaction'],
+        description: 'Click an element by reference from snapshot',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['ref'],
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  ref: {
+                    type: 'string',
+                    description: 'Element reference (e.g., @e1)',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Successfully clicked element',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BrowserResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/fill': {
+      post: {
+        summary: 'Fill an input field',
+        operationId: 'browserFill',
+        tags: ['interaction'],
+        description: 'Clear and fill an input field with text',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['ref', 'text'],
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  ref: {
+                    type: 'string',
+                    description: 'Element reference',
+                  },
+                  text: {
+                    type: 'string',
+                    description: 'Text to fill',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Successfully filled field',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BrowserResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/screenshot': {
+      post: {
+        summary: 'Take a screenshot',
+        operationId: 'browserScreenshot',
+        tags: ['capture'],
+        description: 'Capture a screenshot of the current page',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  fullPage: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Capture full page',
+                  },
+                  path: {
+                    type: 'string',
+                    description: 'File path to save screenshot',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Screenshot captured',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ScreenshotResult',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/wait': {
+      post: {
+        summary: 'Wait for element or condition',
+        operationId: 'browserWait',
+        tags: ['control'],
+        description: 'Wait for an element, time, or page condition',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  ref: {
+                    type: 'string',
+                    description: 'Element reference to wait for',
+                  },
+                  milliseconds: {
+                    type: 'integer',
+                    description: 'Time to wait in milliseconds',
+                  },
+                  text: {
+                    type: 'string',
+                    description: 'Text content to wait for',
+                  },
+                  load: {
+                    type: 'string',
+                    enum: ['load', 'domcontentloaded', 'networkidle'],
+                    description: 'Page load state to wait for',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Wait completed',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BrowserResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/state/save': {
+      post: {
+        summary: 'Save browser state',
+        operationId: 'browserStateSave',
+        tags: ['state'],
+        description: 'Save cookies, localStorage, and sessionStorage',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['path'],
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  path: {
+                    type: 'string',
+                    description: 'File path to save state',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'State saved successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BrowserResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/state/load': {
+      post: {
+        summary: 'Load browser state',
+        operationId: 'browserStateLoad',
+        tags: ['state'],
+        description: 'Load previously saved browser state',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['path'],
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  path: {
+                    type: 'string',
+                    description: 'File path to load state from',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'State loaded successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/BrowserResponse',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/browser/get': {
+      post: {
+        summary: 'Get element information',
+        operationId: 'browserGet',
+        tags: ['query'],
+        description: 'Get text, value, title, or URL',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['property'],
+                properties: {
+                  sessionId: {
+                    type: 'string',
+                  },
+                  property: {
+                    type: 'string',
+                    enum: ['text', 'value', 'title', 'url'],
+                    description: 'Property to retrieve',
+                  },
+                  ref: {
+                    type: 'string',
+                    description: 'Element reference (required for text/value)',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Property value',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    value: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  components: {
+    schemas: {
+      BrowserResponse: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+          },
+          message: {
+            type: 'string',
+          },
+          sessionId: {
+            type: 'string',
+          },
+        },
+      },
+      SnapshotResult: {
+        type: 'object',
+        properties: {
+          elements: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/ElementRef',
+            },
+          },
+          tree: {
+            type: 'string',
+            description: 'Accessibility tree as text',
+          },
+          url: {
+            type: 'string',
+          },
+          title: {
+            type: 'string',
+          },
+        },
+      },
+      ElementRef: {
+        type: 'object',
+        properties: {
+          ref: {
+            type: 'string',
+            description: 'Element reference (e.g., @e1)',
+          },
+          type: {
+            type: 'string',
+            description: 'Element type (button, textbox, etc.)',
+          },
+          name: {
+            type: 'string',
+            description: 'Element name or label',
+          },
+          text: {
+            type: 'string',
+            description: 'Element text content',
+          },
+        },
+      },
+      ScreenshotResult: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+          },
+          path: {
+            type: 'string',
+            description: 'File path where screenshot was saved',
+          },
+          data: {
+            type: 'string',
+            format: 'byte',
+            description: 'Base64 encoded image data',
+          },
+        },
+      },
+    },
+  },
+};
+
+/**
  * All available demo specs - MCP Tool Examples
  */
 export const demoSpecs = {
@@ -1969,6 +2475,11 @@ export const demoSpecs = {
     name: 'Buying Agent Tool',
     description: 'Search products, compare prices, and assist with purchases',
     spec: buyingAgentSpec,
+  },
+  agentBrowser: {
+    name: 'Agent Browser Tool',
+    description: 'Automate browser interactions for testing, form filling, screenshots, and data extraction',
+    spec: agentBrowserSpec,
   },
 } as const;
 
