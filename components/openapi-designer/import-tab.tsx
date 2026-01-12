@@ -54,10 +54,11 @@ export function ImportTab() {
 
   const getDemoIcon = (demoKey: DemoSpecKey) => {
     const icons = {
-      petstore: Play,
-      ecommerce: ShoppingCart,
-      weather: Cloud,
-      userManagement: Users,
+      webSearch: Play,
+      computerUse: Users,
+      browserUse: Cloud,
+      apiCalling: FileJson,
+      buyingAgent: ShoppingCart,
     };
     return icons[demoKey];
   };
